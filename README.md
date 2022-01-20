@@ -129,5 +129,16 @@ How to hide files on a mac
 https://www.howtogeek.com/211496/how-to-hide-files-and-view-hidden-files-on-mac-os-x/#:~:text=Hide%20a%20File%20or%20Folder%20on%20a%20Mac&text=Drag%2Dand%2Ddrop%20a%20folder,file%20or%20folder%20will%20vanish.
 
 
+Make encryption and decryption algorithms and make them work on any text file
 
+START WITH BARE BONES, add features later
+-decide what bare bones features are
+
+Explain thought process in readme
+-wanted to make a way to encrypt my passwords on my computer similar to what icloud keychain does
+-block or stream cipher?
+-how to obscure repetitive password username encryption 
+-how would this work on a different keyboard?
+-enter password to get into your account, enter filename of encrypted file and it will decrypt it, if you input unencrypted file it will reject it  
+-input recovery email which will get password sent to it if password is forgotten 
 
