@@ -1,133 +1,48 @@
-#include "header.h"    
+#include "header.h"  
+#include <stdio.h>    
+#include <stdlib.h>
+#include <string.h>
+#include <glob.h>
+#include <stdbool.h>
+#include <assert.h>
+
 // link to Header file "hashmap.h" which contains:
 // linked list node struct "llnode"
 // hashmap struct "hashmap"
 
 int main(void){
 
-}
-
-
-
-
-struct hashmap* hm_create(int num_buckets){
+    // call the prompt user function
+    promptUser();
 
 }
 
-int hm_get(struct hashmap* hm, char* word, char* document_id){
+void promptUser(void){
 
-}
+    printf("\n -- WELCOME TO LYNX ENCRYPTION -- \n\n");
+    printf("Please enter e to encrypt, d to decrypt, or x to exit:\n\n");
 
-void hm_put(struct hashmap* hm, char* word, char* document_id, int num_occurrences){
+    // read input char from user (only allow single char input, error check if it is not e,d, or x)
 
-}
-
-void hm_destroy(struct hashmap* hm){
-
-}
-
-int hash(struct hashmap* hm, char* word, char* document_id){
-
-}
-
-
-
-// #include <stdio.h>    
-// #include <stdlib.h>
-// #include <string.h>
-// #include <glob.h>
-// #include <stdbool.h>
-// #include "hashmap.h"
-// #include <assert.h>
-
-
-// struct qeuryNode {
-//     char* word;
-//     struct queryNode* next; 
-// };
-
-// int main(void) {
-//     // skips user prompts for easy testing
-//     int debug =0; // 1=true
-
-//     // 1. prompt user for number of buckets and save it as a string
-//     char* charBuckets;
-//     printf("How many buckets?: ");
-
-//     // create inputs for getline function
-//     char* input = NULL;
-//     size_t length = 0;
-//     size_t lnSize = 0;
-
-//     lnSize = getline(&input, &length, stdin); 
-//     if(lnSize){
-//         // to avoid error: variable ‘lnSize’ set but not used
-//     }
-
-//     charBuckets = strtok(input, "\n");
-
-//     if(debug){
-//         charBuckets = "5";
-//     }
-
-//     // 2. prompt user for directory to be searched and save it as a string
-//     char* directory;
-//     printf("Please specify the directory and document type you would like to search:\n");
-//     printf("Example: 'p5docs/*.txt'\n");
     
-//     // create inputs for getline function
-//     char* line = NULL;
-//     size_t len = 0;
-//     size_t lineSize = 0;
 
-//     lineSize = getline(&line, &len, stdin); 
-//     if(lineSize){
-//         // to avoid error: variable ‘lineSize’ set but not used
-//     }
 
-//     directory = strtok(line, "\n");
-    
-//     // hardcode directory during debugging
-//     if(debug){
-//         directory = "p5docs/*.txt";
-//     }
 
-//     glob_t result;
-//     int retval = glob(directory, 0, NULL, &result);
-//     if(retval !=0){
-//         printf("Directory invalid, glob unsuccessful: exiting main\n");
-//         return -1;
-//     }
+    // if(input == e){
+    //     encrypt();
 
-//         // 4. confirm searchable files are present in the requested directory
-//     int numFiles = (int) result.gl_pathc;
-//     if(result.gl_pathc<1){
-//         printf("No files in this directory: exiting main\n");
-//         return -1;
-//     }
+    //     // return to user prompt after encryption completes
+    //     promptUser(); 
+    // }
 
-//     //printf("num files is: %d\n", numFiles);
 
-//     glob_t* globPtr = &result;
+    // if(input == d){
+    //     call decrypt
 
-//     // 3. create pointer to hashmap struct
-//     struct hashmap* mapStructPtr;
+    // }
 
-//     // 4. call training method
-//     mapStructPtr = training(directory, globPtr, charBuckets);
+    // if(input == x){
+    //     System.exit?
+    // }
 
-//     //printf("\n\n///////////////////    Training phase complete    \\\\\\\\\\\\\\\\\\\\\n\n");
-
-//     int queryResult = 1;
-
-//     while(queryResult == 1){
-//         queryResult = read_query(mapStructPtr, numFiles);
-//     }
- 
-//     //printf("User entered X: Destroying engine\n");
-//     hm_destroy(mapStructPtr);
-//     free(input);
-//     free(line);
-//     globfree(globPtr);
-    
-// }
+}
