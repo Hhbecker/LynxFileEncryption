@@ -1,12 +1,7 @@
 # LynxFileEncryption
 A text file encryption application 
 
-<figure>
     <img src='lynxMeganLorenz.jpg' alt='missing' />
-    <figcaption>Caption goes here</figcaption>
-</figure>
-
-
 
 A block cipher consists of two paired algorithms, one for encryption, E, and the other for decryption, D.[1] Both algorithms accept two inputs: an input block of size n bits and a key of size k bits; and both yield an n-bit output block. The decryption algorithm D is defined to be the inverse function of encryption, i.e., D = E−1. More formally,[2][3] a block cipher is specified by an encryption function
 
