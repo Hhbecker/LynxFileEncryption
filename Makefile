@@ -10,11 +10,11 @@ SRC_DIR = ./
 OBJ_DIR = ./
 
 # file lists
-CFILES = hashmap.c test.c
-OBJS = hashmap.o test.o
+CFILES = driver.c
+OBJS = driver.o
 
 # binary
-BIN = test
+BIN = lynx
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) -o $@ -c $<
