@@ -5,6 +5,10 @@ A text file encryption application
 Wild Canadian Lynx photographed by 
 [Megan Lorenz](https://www.rd.com/article/wild-lynx-on-property)
 
+[I'm an inline-style link](https://www.google.com)
+
+
+
 A block cipher consists of two paired algorithms, one for encryption, E, and the other for decryption, D.[1] Both algorithms accept two inputs: an input block of size n bits and a key of size k bits; and both yield an n-bit output block. The decryption algorithm D is defined to be the inverse function of encryption, i.e., D = E−1. More formally,[2][3] a block cipher is specified by an encryption function
 
 Many modern block ciphers and hashes are ARX algorithms—their round function involves only three operations: (A) modular addition, (R) rotation with fixed rotation amounts, and (X) XOR.
