@@ -112,7 +112,17 @@ https://nullprogram.com/blog/2017/03/30/
 https://www.informit.com/articles/article.aspx?p=1620206
 
 
+## 2 questions
+1. How to make a secure encryption (OTP vs ARX and block vs stream)
+2. How to make a secure hash 
 
+If you want to add login info you could save hashed password to invisible file and check entered passwords against saved hashed password.
+
+On a real application, the username and password information would be hashed and sent to a file on a remote server in a secure network but as a proxy I'm just going to use a hidden file on the user's computer.
+
+
+AES encryption (AES stands for Advanced Encryption Standard)
+SHA hashing (SHA stands for Secure Hashing Algorithm)
 
 C implementation notes
 * C opens, encrypts, and closes file 
@@ -145,3 +155,86 @@ Explain thought process in readme
 -enter password to get into your account, enter filename of encrypted file and it will decrypt it, if you input unencrypted file it will reject it  
 -input recovery email which will get password sent to it if password is forgotten 
 
+
+Understand the difference between how paswswords are treated and how sensitive data is treated.
+Supposedly passwords are hashed but sensitive data is encrypted 
+
+I could use my search engine hash table for lynx to hash the password. 
+
+How does the application authenticate a user with a password hash?
+When the application receives a username and password from a user, it performs the hashing operation on the password and compares the resulting hashed value with the password hash stored in the database for the particular user. If the two hashes are an exact match, the user provided a valid username and password.
+The benefit of hashing is that the application never needs to store the clear text password. It stores only the hashed value.
+
+What are per user salts and iterative hashing capabilities?
+
+What are the risks of using symmetric encryption instead of hashing?
+By design, symmetric encryption is a reversible operation. This means that the encryption key must be accessible to the application and will be used for every password verification.
+
+If the encrypted passwords are stolen, the attackers only need to determine the symmetric key used by the application. Once that key becomes known, through a breach or through brute force attacks on a weak key, all passwords are instantly decrypted and accessible. This is not a good place to be.
+
+Hash functions essentially discard information in a very deterministic way – using the modulo operator. ... Because the modulo operation is not reversible. If the result of the modulo operation is 4 – that's great, you know the result, but there are infinite possible number combinations that you could use to get that 4.
+
+
+
+#### Is hashing reversible?
+Simple 5 bucket hash with 10 numbers you could figure out that its just taking the modulo of the number but you wouldn't be able to tell if the input was 1 or 6. Therefore, you can find an input that leads to an equivalent output but you can never say with certainty what the original input was. 
+
+Take a simple mathematical operation like addition. Addition takes 2 inputs and produces 1 output (the sum of the two inputs). If you know the 2 inputs, the output is easy to calculate - and there's only one answer.
+
+321 + 607 = 928
+
+But if you only know the output, how do you know what the two inputs are?
+
+928 = 119 + 809
+928 = 680 + 248
+928 = 1 + 927
+...
+Now you might think that it doesn't matter - if the two inputs sum to the correct value, then they must be correct. But no.
+
+What happens in a real hash function is that hundreds of one-way operations take place sequentially and the results from earlier operations are used in later operations. So when you try to reverse it (and guess the two inputs in a later stage), the only way to tell if the numbers you are guessing are correct is to work all the way back through the hash algorithm.
+
+If you start guessing numbers (in the later stages) wrong, you'll end up with an inconsistency in the earlier stages (like 2 + 2 = 53). And you can't solve it by trial and error, because there are simply too many combinations to guess (more than atoms in the known universe, etc)
+
+In summary, hashing algorithms are specifically designed to perform lots of one-way operations in order to end up with a result that cannot be calculated backwards.
+
+Update
+
+Since this question seems to have attracted some attention, I thought I'd list a few more of the features hashing algorithms use and how they help to make it non-reversible. (As above, these are basic explanations and if you really want to understand, Wikipedia is your friend).
+
+Bit dependency: A hash algorithm is designed to ensure that each bit of the output is dependent upon every bit in the input. This prevents anyone from splitting the algorithm up and trying to reverse calculate an input from each bit of the output hash separately. In order to solve just one output bit, you have to know the entire input. In other words, when reversing a hash, it's all or nothing.
+
+Avalanching: Related to bit dependency, a change in a single bit in the input (from 0 to 1 or vice-versa) is designed to result in a huge change in the internal state of the algorithm and of the final hash value. Since the output changes so dramatically with each input bit change, this stops people from building up relationships between inputs and outputs (or parts thereof).
+
+Non-linearity: Hashing algorithms always contain non-linear operations - this prevents people from using linear algebra techniques to "solve" the input from a given output. Note the addition example I use above is a linear operation; building a hash algorithm using just addition operators is a really bad idea! In reality, hashing algorithms use many combinations of linear and non-linear operations.
+
+All of this adds up to a situation where the easiest way of finding a matching hash is just to guess a different input, hash it and see if it matches.
+
+Lastly, if you really want to know how hard reversing a hash is, there's no better substitute than just trying it out for yourself. All good hashing algorithms are openly published and you can find plenty of code samples. Take one and try to code a version that reverses each step; you'll quickly discover why it's so hard.
+
+#### hash collision attack
+A Hash Collision Attack is an attempt to find two input strings of a hash function that produce the same hash result. Because hash functions have infinite input length and a predefined output length, there is inevitably going to be the possibility of two different inputs that produce the same output hash. If two separate inputs produce the same hash output, it is called a collision. This collision can then be exploited by any application that compares two hashes together – such as password hashes, file integrity checks, etc.
+
+The odds of a collision are of course very low, especially so for functions with very large output sizes. However as available computational power increases, the ability to brute force hash collisions becomes more and more feasible.
+
+For example, let’s say we have a hypothetical hash function. A collision attack would first start with a starting input value, and hash it.
+
+
+Now the attacker needs to find a collision – a different input that generates the same hash as the previous input. This would generally be done through a brute-force method (trying all possible combinations) until one was found. Let’s say we found a collision for this input in our hypothetical hash function.
+
+The attacker now knows two inputs with the same resulting hash.
+
+
+#### Salted hashing
+Salt makes hashes stronger. Since the entire hash changes even if just one letter of the plaintext word is changed, all a site needs to do to foil lookup tables is add some extra plaintext to the password before it’s hashed. The attacker will be able to read the plaintext salt since it’s stored in the database, but it forces them to recompute every possible combination of potential passwords and salts.
+
+Of course, salted hashes can still be cracked. Hackers can just add the salt to the password they’re guessing, hash the combination, and wait for matches to pop up – a standard dictionary attack. Since modern GPUs can make billions of guesses per second, this isn’t at all infeasible, but it does make the process a lot more annoying. Failing that, brute-force attacks are slow but very effective.
+
+#### Key stretching
+Slow hashing algorithms, like PBKDF2 or bcrypt, use a technique known as “key stretching” to slow down dictionary and brute force attacks. This essentially involves setting the hash function to iterate a certain number of times (though it’s a bit more complex than just running the same thing over and over again), so that in order to reach the correct hash you have to use a lot of computing power. If a site is doing all this, their security is pretty good.
+
+#### Reminder
+Password security has made some big advances – and so has the art of cracking that security. Unfortunately, humans are still bad at password management, and databases don’t upgrade security as often as they should. In general, assume that whenever you create an account, the password is being stored with relatively weak security. If your password is common or a dictionary word, then it’s at a pretty high risk of being cracked. Make your passwords long, mixing letters, numbers, and symbols, and you’ll be helping hash functions do their best work.
+
+#### Lookup/Rainbow table
+a pre-generated table full of potential passwords and their hashes. 
+Hashes aren’t hackproof, though. All an attacker has to do is run a dictionary of potential passwords through the hash function, then compare those hashes to the hashes in the database. When two hashes match, the hacker can just look at which password generated that hash.

@@ -3,5 +3,6 @@
 
 void encrypt(void);
 void decrypt(void);
+void promptUser(void);
 
 #endif 

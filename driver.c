@@ -12,6 +12,8 @@
 
 int main(void){
 
+    printf("\n -- WELCOME TO LYNX ENCRYPTION -- \n\n");
+
     // call the prompt user function
     promptUser();
 
@@ -19,30 +21,37 @@ int main(void){
 
 void promptUser(void){
 
-    printf("\n -- WELCOME TO LYNX ENCRYPTION -- \n\n");
     printf("Please enter e to encrypt, d to decrypt, or x to exit:\n\n");
 
+    // flush stdin buffer from previous getchar calls
+    fflush(stdin);
+
     // read input char from user (only allow single char input, error check if it is not e,d, or x)
+    int input = getchar();
 
-    
+    printf("%d\n", input);
 
-
-
-    // if(input == e){
-    //     encrypt();
-
-    //     // return to user prompt after encryption completes
-    //     promptUser(); 
-    // }
+    if(input == 101){
+        encrypt();
 
 
-    // if(input == d){
-    //     call decrypt
+        // return to user prompt after encryption completes
+        promptUser(); 
+    }
 
-    // }
+    else if(input == 100){
+        //decrypt();
 
-    // if(input == x){
-    //     System.exit?
-    // }
+        // return to user prompt after encryption completes
+        promptUser();
+    }
 
+    else if(input == 120){
+        exit(0);
+    }
+
+    else{
+        printf("\nInput invalid. ");
+        promptUser();
+    }
 }
