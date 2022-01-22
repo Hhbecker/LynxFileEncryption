@@ -2,10 +2,10 @@
 A text file encryption application 
 
 <img src="images/lynxMeganLorenz.jpg" width="600px" height="400px">
-Wild Canadian Lynx photographed by Megan Lorenz
-
+Wild Canadian Lynx photographed by Megan Lorenz <br /><br />
 
 I chose to implement this encryption module in C to make use of the well supported bitwise operations specifically the bitwise XOR which is commonly used in ciphers because it is secure with nonrepetitive keys, computationally inexpensive, and easy to reverse.
+<br /><br />
 
 
 A block cipher consists of two paired algorithms, one for encryption, E, and the other for decryption, D.[1] Both algorithms accept two inputs: an input block of size n bits and a key of size k bits; and both yield an n-bit output block. The decryption algorithm D is defined to be the inverse function of encryption, i.e., D = E−1. More formally,[2][3] a block cipher is specified by an encryption function
