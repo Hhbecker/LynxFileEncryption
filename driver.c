@@ -29,12 +29,11 @@ void promptUser(void){
     // read input char from user (only allow single char input, error check if it is not e,d, or x)
     int input = getchar();
 
-    printf("%d\n", input);
+    // printf("Input is = %d\n", input);
 
     if(input == 101){
         encrypt();
-
-
+        
         // return to user prompt after encryption completes
         promptUser(); 
     }

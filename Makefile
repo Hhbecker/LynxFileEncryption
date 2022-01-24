@@ -10,8 +10,8 @@ SRC_DIR = ./
 OBJ_DIR = ./
 
 # file lists
-CFILES = driver.c
-OBJS = driver.o
+CFILES = driver.c functions.c
+OBJS = driver.o functions.o
 
 # binary
 BIN = lynx

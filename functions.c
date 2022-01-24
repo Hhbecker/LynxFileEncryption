@@ -7,52 +7,38 @@
 #include <assert.h>
 
 void encrypt(void){
-    // must ask for file and check file
-    
+    // bool debug = true;
+
     // read in file name
-
-    char* directory;
-    printf("Please specify the directory and document type you would like to search:\n");
-    printf("Example: 'p5docs/*.txt'\n");
+    printf("\nPlease specify the document you would like to encrypt:\n");
+    //printf("Example: 'p5docs/*.txt'\n");
     
-    // create inputs for getline function
-    char* line = NULL;
-    size_t len = 0;
-    size_t lineSize = 0;
+    char* fileName = "testDir/gibberish.txt";
 
-    lineSize = getline(&line, &len, stdin); 
-    if(lineSize){
-        // to avoid error: variable ‘lineSize’ set but not used
+    //int asInt;
+
+    FILE *fp ;
+    char c ;
+    printf( "Opening the file\n" ) ;
+    fp = fopen ( fileName, "r" ) ; // opening an existing file
+    if ( fp == NULL )
+    {
+        printf ( "Could not open file\n" ) ;
     }
-
-    directory = strtok(line, "\n");
-    
-    // hardcode directory during debugging
-    if(debug){
-        directory = "p5docs/*.txt";
+    printf( "Reading the file\n" ) ;
+    while ( 1 )
+    {
+        c = fgetc ( fp ) ; // reading the file
+        if(c == EOF){
+            break;
+        }
+        else{
+            printf ( "%c", c ) ;
+            //asInt = (int) c;
+            //printf ( "%d ", asInt);
+        }
     }
-
-    glob_t result;
-    int retval = glob(directory, 0, NULL, &result);
-    if(retval !=0){
-        printf("Directory invalid, glob unsuccessful: exiting main\n");
-        return -1;
-    }
-
-        // 4. confirm searchable files are present in the requested directory
-    int numFiles = (int) result.gl_pathc;
-    if(result.gl_pathc<1){
-        printf("No files in this directory: exiting main\n");
-        return -1;
-    }
-
-    //printf("num files is: %d\n", numFiles);
-
-    glob_t* globPtr = &result;
-
-
-
-
+    printf("\nClosing the file\n") ;
 
 
 
@@ -62,3 +48,4 @@ void decrypt(void){
     // must ask for file and check file
 
 }
+
