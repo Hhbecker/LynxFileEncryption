@@ -31,15 +31,18 @@ void promptUser(void){
 
     // printf("Input is = %d\n", input);
 
+    // if input is e for encrypt
     if(input == 101){
-        encrypt();
+        // 0 triggers readFile encrypt mode
+        readFile(0);
         
         // return to user prompt after encryption completes
         promptUser(); 
     }
-
+    // if input is d for decrypt
     else if(input == 100){
-        //decrypt();
+        // 1 triggers readFile decrypt mode
+        readFile(1);
 
         // return to user prompt after encryption completes
         promptUser();
