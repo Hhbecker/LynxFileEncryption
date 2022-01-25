@@ -65,11 +65,80 @@ void encrypt(void){
     fclose(fp);
     fclose(fpBin);
 
-    char cmd[100];
-    strcpy(cmd,"GetFileInfo testDir/test.bin | sed -n 5p | cut -d ':' -f 4 > seedTemp.txt");
-    system(cmd);
+    int seed = getSeed(binFile);
+    if(seed >= 0 && seed <=60){
+        printf("Encryption key seed retrieved succesfully. Seed = %d\n", seed);
+    }
+    else{
+        printf("Seed retrieval error\n");
+    }
 
-    printf("\n\n");
+
+
+}
+
+void decrypt(void){
+
+    // this is the encrypt code
+    // diferences include - reading from binary and writing to text instead of other way around 
+    // 
+
+    printf("\n\nENCRYPTION IN PROGRESS...\n") ;
+
+    printf("\n\nOpening the file\n") ;
+
+    // this is where you would take in user input of filename to be encrypted
+    char* txtFile = "testDir/gibberish.txt";
+    char* binFile = "testDir/test.bin";
+
+    //first check for EOF then cast to char 
+
+    int asInt;
+
+    FILE *fp;
+
+    fp = fopen (txtFile, "w") ; // opening an existing file in r+ mode
+   
+    if ( fp == NULL ){
+        printf ("Could not open file\n");
+        return;
+    }
+
+    FILE *fpBin;
+
+    fpBin = fopen(binFile, "rb");  // r for read, b for binary
+
+    if ( fpBin == NULL ){
+        printf ("Could not open binary file\n");
+        return;
+    }
+
+    //int newInt;
+    char newChar;
+
+    // pass in seed it returns next seed 
+    // first seed you pass in is file creation time
+
+    // iterate through each char in the text file
+    // while(1){
+    //     asInt = fgetc (fp) ; // reading the file
+    //     if(asInt==EOF){
+    //         break;
+    //     }
+    //     else {
+    //         //newInt = function(asInt);
+    //         newChar = (char) asInt;
+
+    //         //&newInt gets address of int in memory and passes that address to fwrite
+    //         fwrite(&newChar, sizeof newChar, 1, fpBin);      
+    //     }
+    // }
+
+
+
+    printf("\nClosing the file\n\n") ;
+    fclose(fp);
+    fclose(fpBin);
 
     int seed = getSeed(binFile);
     if(seed >= 0 && seed <=60){
@@ -78,6 +147,7 @@ void encrypt(void){
     else{
         printf("Seed retrieval error\n");
     }
+
 
 
 
