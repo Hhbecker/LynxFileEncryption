@@ -12,6 +12,7 @@ void encrypt(void){
 
     printf("\n\nOpening the file\n") ;
 
+    // this is where you would take in user input of filename to be encrypted
     char* txtFile = "testDir/gibberish.txt";
     char* binFile = "testDir/test.bin";
 
@@ -37,62 +38,107 @@ void encrypt(void){
         return;
     }
 
-    int newInt;
+    //int newInt;
     char newChar;
 
+    // pass in seed it returns next seed 
+    // first seed you pass in is file creation time
+
+    // iterate through each char in the text file
     while(1){
         asInt = fgetc (fp) ; // reading the file
         if(asInt==EOF){
             break;
         }
         else {
-            newInt = function(asInt);
-            newChar = (char) newInt; 
-        
-            // // set the position of the stream one character back, this is done by getting the current 
-            // // position using ftell, subtracting one from it and using fseek to set a new position
-            // fseek(fp, ftell(fp) - 1, SEEK_SET);
+            //newInt = function(asInt);
+            newChar = (char) asInt;
 
-            // ////////////////// STAGING AREA 1 ////////////////////////
-            // //fprintf(fp, "%c", newChar);    // print using fprintf as a char
-            // //fprintf(fp, "%d", newInt);     // print using fprintf as an int
-            // putw(newInt, fp);
-
-            // // print to console
-            // printf("%u", newInt);
-
-            // create new binary file and write this int to the binary file 
-
-            fwrite(&newInt, sizeof newInt, 1, fpBin); //&newInt gets address of int in memory and passes that address to fwrite
-
-        }
-        else{
-            newInt = decrypt(asInt);
-            newChar = (char) newInt;
-            // set the position of the stream one character back, this is done by getting the current 
-            // position using ftell, subtracting one from it and using fseek to set a new position
-            fseek(fp, ftell(fp) - 1, SEEK_SET);
-
-            /////////////////// STAGING AREA 2 ///////////////////////
-            //fprintf(fp, "%c", newChar);
-            //fprintf(fp, "%d", newInt);
-            putw(newInt, fp);
-
-            // print to console
-            printf("%c", newChar);
+            //&newInt gets address of int in memory and passes that address to fwrite
+            fwrite(&newChar, sizeof newChar, 1, fpBin);      
         }
     }
+
+
 
     printf("\nClosing the file\n\n") ;
     fclose(fp);
     fclose(fpBin);
 
+    char cmd[100];
+    strcpy(cmd,"GetFileInfo testDir/test.bin | sed -n 5p | cut -d ':' -f 4 > seedTemp.txt");
+    system(cmd);
+
+    printf("\n\n");
+
+    int seed = getSeed(binFile);
+    if(seed >= 0 && seed <=60){
+        printf("Encryption key seed retrieved succesfully. Seed = %d\n", seed);
+    }
+    else{
+        printf("Seed retrieval error\n");
+    }
+
+
+
 }
 
 // // must return an int between 0-127
 int function(int num){
+
+    // An early computer-based PRNG, suggested by John von Neumann in 1946, 
+    // is known as the middle-square method. The algorithm is as follows: 
+    // take any number, square it, remove the middle digits of the resulting 
+    // number as the "random number", then use that number as the seed for the 
+    // next iteration.
+
+
+
+
     return num-100;
 }
+
+// This function runs a bash command to retrieve the creation date of the file specified in the input, 
+// temporarily writes the second of the creation time to a file and saves the contents of this file into 
+// the C variable number which is the seed of the encrpytion key and is returned by this function
+int getSeed(char* fileName){
+
+    //concatenate filename string with rest of command
+    const char* tempFile = "testDir/seedTemp.txt";
+
+    //send second of file creation into file seedTemp.txt
+    char str[100];
+    strcpy(str, "GetFileInfo ");
+    strcat(str, fileName);
+    strcat(str, " | sed -n 5p | cut -d ':' -f 4 > ");
+    strcat(str, tempFile);
+    // full string is "GetFileInfo fileName.txt | sed -n 5p | cut -d ':' -f 4 > seedTemp.txt"
+    // pipe the output of the GetFileInfo command into sed which pipes the 5th line of the ouput 
+    // to cut which sends the information after the 4th colon to the file seedTemp.txt
+    system(str);
+
+    // open seedTemp.txt and save value as integer
+    FILE *in_file;
+    int number;
+
+    in_file = fopen(tempFile, "r");
+
+    if (in_file == NULL)
+    {
+        printf("Can't open file for reading.\n");
+        return -1;
+    }
+    else
+    {
+        fscanf(in_file, "%d", &number);
+        fclose(in_file);
+    }
+
+    remove(tempFile);
+
+    return number;
+}
+
 
 
 int functionInverse(int num){
@@ -104,6 +150,11 @@ int functionInverse(int num){
 
 
 void readTxt(FILE* fp){
+
+    if(fp){
+
+    }
+
     // // bool debug = true;
 
     // // read in file name
@@ -145,6 +196,9 @@ void readTxt(FILE* fp){
 
 void readBin(FILE *fp){
     
+    if(fp){
+        
+    }
 }
 
 
