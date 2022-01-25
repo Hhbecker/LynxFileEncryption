@@ -35,6 +35,8 @@ void promptUser(void){
     if(input == 101){
         // 0 triggers readFile encrypt mode
         encrypt();
+
+        printf("your file has been converted to an encrypted binary format. To view encrypted binary press v\n");
         
         // return to user prompt after encryption completes
         promptUser(); 
@@ -42,7 +44,7 @@ void promptUser(void){
     // if input is d for decrypt
     else if(input == 100){
         // 1 triggers readFile decrypt mode
-        decrypt();
+        //decrypt();
 
         // return to user prompt after encryption completes
         promptUser();
