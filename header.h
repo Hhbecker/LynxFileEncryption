@@ -1,9 +1,10 @@
 #ifndef LYNX_H
 #define LYNX_H
 
-int encrypt(int num);
-int decrypt(int num);
-void readFile(int mode);
+void encrypt(void);
+void decrypt(void);
+void readTxt(FILE *fp);
+void readBin(FILE *fp);
 void promptUser(void);
 
 #endif 

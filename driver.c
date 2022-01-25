@@ -34,7 +34,7 @@ void promptUser(void){
     // if input is e for encrypt
     if(input == 101){
         // 0 triggers readFile encrypt mode
-        readFile(0);
+        encrypt();
         
         // return to user prompt after encryption completes
         promptUser(); 
@@ -42,7 +42,7 @@ void promptUser(void){
     // if input is d for decrypt
     else if(input == 100){
         // 1 triggers readFile decrypt mode
-        readFile(1);
+        decrypt();
 
         // return to user prompt after encryption completes
         promptUser();
