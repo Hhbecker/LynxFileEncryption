@@ -8,6 +8,9 @@ I chose to implement this encryption module in C to make use of the well support
 <br /><br />
 
 
+#### Overflow 
+If overflow occurs the original text will be lost and unrecoverable. The data type that stores the plaintext as well as the ciphertext is of a fixed size. If an operation during the cipher causes overflow the inverse of that operation will not necessarily return the original plaintext.
+
 A block cipher consists of two paired algorithms, one for encryption, E, and the other for decryption, D.[1] Both algorithms accept two inputs: an input block of size n bits and a key of size k bits; and both yield an n-bit output block. The decryption algorithm D is defined to be the inverse function of encryption, i.e., D = E−1. More formally,[2][3] a block cipher is specified by an encryption function
 
 Many modern block ciphers and hashes are ARX algorithms—their round function involves only three operations: (A) modular addition, (R) rotation with fixed rotation amounts, and (X) XOR.
@@ -250,3 +253,13 @@ Password security has made some big advances – and so has the art of cracking 
 #### Lookup/Rainbow table
 a pre-generated table full of potential passwords and their hashes. 
 Hashes aren’t hackproof, though. All an attacker has to do is run a dictionary of potential passwords through the hash function, then compare those hashes to the hashes in the database. When two hashes match, the hacker can just look at which password generated that hash.
+
+
+Also note that it is standard practice for every header file is to define a macro of the same name (IN CAPS), and enclose the entire header between #ifndef, #endif. In C, this prevents a header from getting #included twice. This is known as the "internal include guard" (with thanks to Story Teller for pointing that out). All system headers such as stdio.h include an internal include guard. All user defined headers should also include an internal include guard as shown in the example below.
+
+
+#### Using inode data for seed
+The inode (index node) is a data structure in a Unix-style file system that describes a file-system object such as a file or a directory. Each inode stores the attributes and disk block locations of the object's data.[1] File-system object attributes may include metadata (times of last change,[2] access, modification), as well as owner and permission data.[3]
+
+#### Issues 
+seed is set by file timestamp which is changed if file is edited by vim because vim creates a new file each time you edit.
