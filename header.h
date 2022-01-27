@@ -10,5 +10,6 @@ void readTxt(FILE* fp);
 void readBin(FILE* fp);
 void promptUser(void);
 int getSeed(char* fileName);
+int getKey(int currentKey);
 
 #endif 

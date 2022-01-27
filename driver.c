@@ -44,7 +44,7 @@ void promptUser(void){
     // if input is d for decrypt
     else if(input == 100){
         // 1 triggers readFile decrypt mode
-        //decrypt();
+        decrypt();
 
         // return to user prompt after encryption completes
         promptUser();

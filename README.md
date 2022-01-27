@@ -11,12 +11,33 @@ I chose to implement this encryption module in C to make use of the well support
 #### Overflow 
 If overflow occurs the original text will be lost and unrecoverable. The data type that stores the plaintext as well as the ciphertext is of a fixed size. If an operation during the cipher causes overflow the inverse of that operation will not necessarily return the original plaintext.
 
+#### Background
 A block cipher consists of two paired algorithms, one for encryption, E, and the other for decryption, D.[1] Both algorithms accept two inputs: an input block of size n bits and a key of size k bits; and both yield an n-bit output block. The decryption algorithm D is defined to be the inverse function of encryption, i.e., D = E−1. More formally,[2][3] a block cipher is specified by an encryption function
 
 Many modern block ciphers and hashes are ARX algorithms—their round function involves only three operations: (A) modular addition, (R) rotation with fixed rotation amounts, and (X) XOR.
 
 These ARX operations are popular because they are relatively fast and cheap in hardware and software, their implementation can be made extremely simple, and also because they run in constant time, and therefore are immune to timing attacks. The rotational cryptanalysis technique attempts to attack such round functions.
 
+#### Strengths of Lynx
+
+#### Weaknesses of Lynx
+
+#### Stream cipher
+Simply put, a stream cipher uses a cryptographically secure psuedorandom number generator (CSPRNG) to produce a key stream of arbitrary length, and then uses the resultant psuedorandom information to encrypt the plaintext by combining the two.
+
+#### Current cipher idea
+1. add either 1 or zero to each bit of the byte depending on key
+2. XOR each byte with key
+3. perform a wrap around bit shift of each byte based on key
+
+#### To create and retrieve key for a given file
+1. create binary file during encryption process
+2. use seconds of file creation time as seed for key during encryption
+3. retrievre seconds of file creation as seed for key during decryption
+
+### Create a java gui to sit on top of the c
+
+### implement cipher bit operations in assembly 
 
 ## Add (Caesar Cipher)
 Casaer shifted each letter in his military commands to make them appear meaningless to the enemy if they were intercepted. The weakness of the ceasar cipher is that each letter in any language has a given fre   uency of use. This use frequency can be thought of as the language's fngerprint. By comparing frequencies of cipher letters to the known freuency of letters in the language being encrypted with enough data one can determine the shift used to encrypt the original message. This is known as frequency analysis and is the most important weakness of the Caesar cipher.
@@ -263,3 +284,44 @@ The inode (index node) is a data structure in a Unix-style file system that desc
 
 #### Issues 
 seed is set by file timestamp which is changed if file is edited by vim because vim creates a new file each time you edit.
+
+
+"GetFileInfo fileName.txt | sed -n 5p | cut -d ':' -f 4 > seedTemp.txt"
+
+xxd -b testDir/test.bin | cut -d: -f 2 | sed 's/  .*//; s/ //g'
+
+
+grep
+
+#### cut
+Divide a file into several parts.
+
+Syntax
+       cut -b list [-n] [file ...]
+       cut -c list [file ...]
+       cut -f list [-d delim] [-s] [file ...]
+
+Options
+     -b list     The list specifies byte positions.
+
+     -c list     The list specifies character positions.
+
+     -d delim    Use the first character of the string delim as the field delimiter
+                 character instead of the tab character.
+
+     -f list     The list specifies fields, delimited in the input by a single
+                 tab character.  Output fields are separated by a single tab
+                 character.
+
+     -n          Do not split multi-byte characters.
+
+     -s          Suppresses lines with no field delimiter characters.  Unless
+                 specified, lines with no delimiters are passed through unmodified.
+                 
+
+
+sed
+
+awk 
+
+

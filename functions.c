@@ -16,20 +16,15 @@ void encrypt(void){
     char* txtFile = "testDir/gibberish.txt";
     char* binFile = "testDir/test.bin";
 
-    //first check for EOF then cast to char 
-
-    int asInt;
-
     FILE *fp;
+    FILE *fpBin;
 
-    fp = fopen (txtFile, "r") ; // opening an existing file in r+ mode
+    fp = fopen (txtFile, "r") ; // opening an existing file in r mode
    
     if ( fp == NULL ){
         printf ("Could not open file\n");
         return;
     }
-
-    FILE *fpBin;
 
     fpBin = fopen(binFile, "wb");  // w for write, b for binary
 
@@ -38,117 +33,122 @@ void encrypt(void){
         return;
     }
 
-    //int newInt;
-    char newChar;
+    char asChar; // unsigned 8 bit integer typedef
 
     // pass in seed it returns next seed 
     // first seed you pass in is file creation time
-
-    // iterate through each char in the text file
-    while(1){
-        asInt = fgetc (fp) ; // reading the file
-        if(asInt==EOF){
-            break;
-        }
-        else {
-            //newInt = function(asInt);
-            newChar = (char) asInt;
-
-            //&newInt gets address of int in memory and passes that address to fwrite
-            fwrite(&newChar, sizeof newChar, 1, fpBin);      
-        }
-    }
-
-
-
-    printf("\nClosing the file\n\n") ;
-    fclose(fp);
-    fclose(fpBin);
-
     int seed = getSeed(binFile);
+
     if(seed >= 0 && seed <=60){
         printf("Encryption key seed retrieved succesfully. Seed = %d\n", seed);
     }
     else{
         printf("Seed retrieval error\n");
+        return;
     }
 
+    // set first key as seed
+    int key = seed;
 
+    // iterate through each char in the text file
+    while(1){
+        asChar = fgetc(fp) ; // because the EOF constant is negative 1 a comparison to an unsigned uint8_t will always be false so we need to pass the character into a signed data type first for comparison to the EOF constant 
+        if(asChar == EOF){
+            break;
+        }
+        else {
+            printf("Decrypted char = %c\n", asChar);
+
+            key = getKey(key);
+            printf("Key = %d\n", key);
+    
+            asChar = key ^ asChar;
+            printf("Encrypted char = %c\n\n", asChar);
+            
+            //&intByte gets address of int in memory and passes that address to fwrite
+            fwrite(&asChar, sizeof(asChar), 1, fpBin);      
+        }
+    }
+
+    printf("\nClosing the file\n\n") ;
+    fclose(fp);
+    fclose(fpBin);
 
 }
 
 void decrypt(void){
 
-    // this is the encrypt code
-    // diferences include - reading from binary and writing to text instead of other way around 
-    // 
-
-    printf("\n\nENCRYPTION IN PROGRESS...\n") ;
+    printf("\n\nDECRYPTION IN PROGRESS...\n") ;
 
     printf("\n\nOpening the file\n") ;
 
     // this is where you would take in user input of filename to be encrypted
-    char* txtFile = "testDir/gibberish.txt";
+    char* txtFile = "testDir/gibberishDecrypt.txt";
     char* binFile = "testDir/test.bin";
 
-    //first check for EOF then cast to char 
-
-    int asInt;
-
     FILE *fp;
+    FILE *fpBin;
 
-    fp = fopen (txtFile, "w") ; // opening an existing file in r+ mode
+    fp = fopen (txtFile, "w") ; // opening a file in r mode
    
     if ( fp == NULL ){
         printf ("Could not open file\n");
         return;
     }
 
-    FILE *fpBin;
-
-    fpBin = fopen(binFile, "rb");  // r for read, b for binary
+    fpBin = fopen(binFile, "r");  // r for read, b for binary
 
     if ( fpBin == NULL ){
         printf ("Could not open binary file\n");
         return;
     }
 
-    //int newInt;
-    char newChar;
+  
 
     // pass in seed it returns next seed 
     // first seed you pass in is file creation time
-
-    // iterate through each char in the text file
-    // while(1){
-    //     asInt = fgetc (fp) ; // reading the file
-    //     if(asInt==EOF){
-    //         break;
-    //     }
-    //     else {
-    //         //newInt = function(asInt);
-    //         newChar = (char) asInt;
-
-    //         //&newInt gets address of int in memory and passes that address to fwrite
-    //         fwrite(&newChar, sizeof newChar, 1, fpBin);      
-    //     }
-    // }
-
-
-
-    printf("\nClosing the file\n\n") ;
-    fclose(fp);
-    fclose(fpBin);
-
     int seed = getSeed(binFile);
+
     if(seed >= 0 && seed <=60){
         printf("Encryption key seed retrieved succesfully. Seed = %d\n", seed);
     }
     else{
         printf("Seed retrieval error\n");
+        return;
     }
 
+    int key = seed;
+    
+    char asChar;
 
+    int putcResult;
+
+    while(1){
+        asChar = fgetc(fpBin) ; 
+        if(asChar == EOF){   // EOF constant is -1
+            break;
+        }
+        else {
+            //fread(&asChar, sizeof(asChar), 1, fpBin);
+
+            printf("Encrypted char = %c\n", asChar);
+
+            key = getKey(key);
+
+            printf("Key = %d\n", key);
+
+            asChar = key ^ asChar;
+
+            printf("Decrypted char = %c\n\n", asChar);
+            
+            //&intByte gets address of int in memory and passes that address to fwrite
+            putcResult = fputc(asChar, fp);      
+        }
+    }
+
+    printf("\nClosing the file\n\n") ;
+    fclose(fp);
+    fclose(fpBin);
 
 
 }
@@ -166,6 +166,11 @@ int function(int num){
 
 
     return num-100;
+}
+
+int getKey(int currentKey){
+    int newKey = (currentKey*currentKey)/2;
+    return (newKey - 5);
 }
 
 // This function runs a bash command to retrieve the creation date of the file specified in the input, 
@@ -195,7 +200,7 @@ int getSeed(char* fileName){
 
     if (in_file == NULL)
     {
-        printf("Can't open file for reading.\n");
+        printf("Can't open seed temp file for reading.\n");
         return -1;
     }
     else
