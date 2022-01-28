@@ -29,22 +29,20 @@ void promptUser(void){
     // read input char from user (only allow single char input, error check if it is not e,d, or x)
     int input = getchar();
 
-    // printf("Input is = %d\n", input);
-
     // if input is e for encrypt
     if(input == 101){
-        // 0 triggers readFile encrypt mode
-        encrypt();
+        fflush(stdin);
+        char* fileName = readFileName();
+        encrypt(fileName);
 
-        printf("your file has been converted to an encrypted binary format. To view encrypted binary press v\n");
-        
         // return to user prompt after encryption completes
         promptUser(); 
     }
     // if input is d for decrypt
     else if(input == 100){
-        // 1 triggers readFile decrypt mode
-        decrypt();
+        fflush(stdin);
+        char* fileName = readFileName();
+        decrypt(fileName);
 
         // return to user prompt after encryption completes
         promptUser();
@@ -58,4 +56,23 @@ void promptUser(void){
         printf("\nInput invalid. ");
         promptUser();
     }
+}
+
+char* readFileName(void){
+    char* directory;
+    printf("Please specify the filepath and document name:\n");
+    
+    // create inputs for getline function
+    char* line = NULL;
+    size_t len = 0;
+    size_t lineSize = 0;
+
+    lineSize = getline(&line, &len, stdin); 
+    if(lineSize){
+        // to avoid error: variable ‘lineSize’ set but not used
+    }
+
+    directory = strtok(line, "\n");
+
+    return directory;
 }

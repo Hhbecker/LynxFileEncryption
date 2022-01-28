@@ -6,15 +6,12 @@
 #include <stdbool.h>
 #include <assert.h>
 
-void encrypt(void){
+void encrypt(char* txtFile){
 
-    printf("\n\nENCRYPTION IN PROGRESS...\n") ;
-
-    printf("\n\nOpening the file\n") ;
-
-    // this is where you would take in user input of filename to be encrypted
-    char* txtFile = "testDir/gibberish.txt";
-    char* binFile = "testDir/test.bin";
+    // use string functions to create encrypted binary filename from user input filename
+    char* binFile = strdup(txtFile);
+    binFile = strtok(binFile, ".");
+    strcat(binFile, ".lynx");
 
     FILE *fp;
     FILE *fpBin;
@@ -22,7 +19,7 @@ void encrypt(void){
     fp = fopen (txtFile, "r") ; // opening an existing file in r mode
    
     if ( fp == NULL ){
-        printf ("Could not open file\n");
+        printf ("Could not open plaintext file\n");
         return;
     }
 
@@ -39,16 +36,15 @@ void encrypt(void){
     // first seed you pass in is file creation time
     int seed = getSeed(binFile);
 
-    if(seed >= 0 && seed <=60){
-        printf("Encryption key seed retrieved succesfully. Seed = %d\n", seed);
-    }
-    else{
+    if(seed < 0 || seed > 60){
         printf("Seed retrieval error\n");
-        return;
+        return;    
     }
 
     // set first key as seed
     int key = seed;
+
+    printf("\n\n...ENCRYPTION IN PROGRESS...\n") ;
 
     // iterate through each char in the text file
     while(1){
@@ -57,34 +53,42 @@ void encrypt(void){
             break;
         }
         else {
-            printf("Decrypted char = %c\n", asChar);
 
             key = getKey(key);
-            printf("Key = %d\n", key);
     
             asChar = key ^ asChar;
-            printf("Encrypted char = %c\n\n", asChar);
             
             //&intByte gets address of int in memory and passes that address to fwrite
             fwrite(&asChar, sizeof(asChar), 1, fpBin);      
         }
     }
 
-    printf("\nClosing the file\n\n") ;
     fclose(fp);
     fclose(fpBin);
+    
+    printf("An encrypted binary version of your file has been created.\n\nEncrypted file contents:\n");
+    
+    char str[100];
+    strcpy(str, "xxd -b ");
+    strcat(str, binFile);
+    strcat(str, " | cut -d: -f 2 | sed 's/  .*//'");    
+    system(str);
+
+    //system("xxd -b testDir/test.bin | cut -d: -f 2 | sed 's/  .*//'");
+    printf("\n");
 
 }
 
-void decrypt(void){
-
-    printf("\n\nDECRYPTION IN PROGRESS...\n") ;
-
-    printf("\n\nOpening the file\n") ;
+void decrypt(char* binFile){
 
     // this is where you would take in user input of filename to be encrypted
-    char* txtFile = "testDir/gibberishDecrypt.txt";
-    char* binFile = "testDir/test.bin";
+    //char* txtFile = "testDir/gibberishDecrypt.txt";
+    //char* binFile = "testDir/test.bin";
+
+    // use string functions to create encrypted binary filename from user input filename
+    char* txtFile = strdup(binFile);
+    txtFile = strtok(txtFile, ".");
+    strcat(txtFile, ".txt");
 
     FILE *fp;
     FILE *fpBin;
@@ -92,7 +96,7 @@ void decrypt(void){
     fp = fopen (txtFile, "w") ; // opening a file in r mode
    
     if ( fp == NULL ){
-        printf ("Could not open file\n");
+        printf ("Could not open plaintext file\n");
         return;
     }
 
@@ -103,18 +107,13 @@ void decrypt(void){
         return;
     }
 
-  
-
     // pass in seed it returns next seed 
     // first seed you pass in is file creation time
     int seed = getSeed(binFile);
 
-    if(seed >= 0 && seed <=60){
-        printf("Encryption key seed retrieved succesfully. Seed = %d\n", seed);
-    }
-    else{
+    if(seed < 0 || seed > 60){
         printf("Seed retrieval error\n");
-        return;
+        return;    
     }
 
     int key = seed;
@@ -122,6 +121,10 @@ void decrypt(void){
     char asChar;
 
     int putcResult;
+    
+    printf("\n\n...DECRYPTION IN PROGRESS...\n");
+
+    printf("Your file has been converted back to plaintext format. \n\nDecrypted file contents:\n\"");
 
     while(1){
         asChar = fgetc(fpBin) ; 
@@ -129,32 +132,23 @@ void decrypt(void){
             break;
         }
         else {
-            //fread(&asChar, sizeof(asChar), 1, fpBin);
-
-            printf("Encrypted char = %c\n", asChar);
 
             key = getKey(key);
 
-            printf("Key = %d\n", key);
-
             asChar = key ^ asChar;
-
-            printf("Decrypted char = %c\n\n", asChar);
             
             //&intByte gets address of int in memory and passes that address to fwrite
-            putcResult = fputc(asChar, fp);      
+            putcResult = fputc(asChar, fp);   
+            printf("%c", asChar);   
         }
     }
 
-    printf("\nClosing the file\n\n") ;
     fclose(fp);
     fclose(fpBin);
 
+    printf("\"\n\n");
 
 }
-
-// // must return an int between 0-127
-int function(int num){
 
     // An early computer-based PRNG, suggested by John von Neumann in 1946, 
     // is known as the middle-square method. The algorithm is as follows: 
@@ -162,11 +156,6 @@ int function(int num){
     // number as the "random number", then use that number as the seed for the 
     // next iteration.
 
-
-
-
-    return num-100;
-}
 
 int getKey(int currentKey){
     int newKey = (currentKey*currentKey)/2;
@@ -179,7 +168,7 @@ int getKey(int currentKey){
 int getSeed(char* fileName){
 
     //concatenate filename string with rest of command
-    const char* tempFile = "testDir/seedTemp.txt";
+    const char* tempFile = "seedTemp.txt";
 
     //send second of file creation into file seedTemp.txt
     char str[100];
@@ -213,70 +202,4 @@ int getSeed(char* fileName){
 
     return number;
 }
-
-
-
-int functionInverse(int num){
-    return num+100;
-}
-
-
-// I'm converting to binary because if I kept everything in ascii I would have to restrain the results of the ciphertext to integers between 0 and 127 which greatly decreases the strength of the encryption
-
-
-void readTxt(FILE* fp){
-
-    if(fp){
-
-    }
-
-    // // bool debug = true;
-
-    // // read in file name
-    // printf("\nPlease specify the document you would like to encrypt:\n");
-    // //printf("Example: 'p5docs/*.txt'\n");
-    
-    // char* fileName = "testDir/gibberish.txt";
-
-    // // first check for EOF then cast to char 
-
-    // int asInt;
-    // char asChar;
-
-    // FILE *fp;
-    
-    // printf( "Opening the file\n" ) ;
-    // fp = fopen ( fileName, "r" ) ; // opening an existing file
-    // if ( fp == NULL )
-    // {
-    //     printf ("Could not open file\n");
-    //     return;
-    // }
-    // printf( "File contents:\n" ) ;
-    // while(1){
-    //     asInt = fgetc (fp) ; // reading the file
-    //     if(asInt==EOF){
-    //         break;
-    //     }
-    //     if(asInt>127){
-    //         //printf("Non ascii characters present in file, these characters will be replaced with ?\n");
-    //     }
-    //     asChar = (char) asInt;
-    //     printf("%c", asChar);
-    // }
-   
-    // fclose(fp);
-
-}
-
-void readBin(FILE *fp){
-    
-    if(fp){
-        
-    }
-}
-
-
-
-
 
