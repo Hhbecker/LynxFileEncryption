@@ -18,6 +18,10 @@ Many modern block ciphers and hashes are ARX algorithms—their round function i
 
 These ARX operations are popular because they are relatively fast and cheap in hardware and software, their implementation can be made extremely simple, and also because they run in constant time, and therefore are immune to timing attacks. The rotational cryptanalysis technique attempts to attack such round functions.
 
+### Choice of languages
+I chose to use C to implement the encrypt and decrypt functions because I wanted to work at the lowest level possible when performing bitwise operations. C has good support for bitwise operations but more importantly C allows one to write assembler directives inline which is how I implemented the XOR function on each byte of the plaintext. Implementing the encrypt and decrypt functions in C with inline assembler directives for the XOR operation will greatly increase performance with large ciphertexts. 
+
+
 #### Strengths of Lynx
 
 #### Weaknesses of Lynx
@@ -285,40 +289,17 @@ The inode (index node) is a data structure in a Unix-style file system that desc
 #### Issues 
 seed is set by file timestamp which is changed if file is edited by vim because vim creates a new file each time you edit.
 
+filename generator separates file extension by finding first "." character so if there are more than one "." characters in a filename it will change the filename incorrectly.
+
 
 "GetFileInfo fileName.txt | sed -n 5p | cut -d ':' -f 4 > seedTemp.txt"
 
-xxd -b testDir/test.bin | cut -d: -f 2 | sed 's/  .*//; s/ //g'
-
+xxd -b testDir/test.bin | cut -d: -f 2 | sed 's/  .*//'
 
 grep
 
 #### cut
 Divide a file into several parts.
-
-Syntax
-       cut -b list [-n] [file ...]
-       cut -c list [file ...]
-       cut -f list [-d delim] [-s] [file ...]
-
-Options
-     -b list     The list specifies byte positions.
-
-     -c list     The list specifies character positions.
-
-     -d delim    Use the first character of the string delim as the field delimiter
-                 character instead of the tab character.
-
-     -f list     The list specifies fields, delimited in the input by a single
-                 tab character.  Output fields are separated by a single tab
-                 character.
-
-     -n          Do not split multi-byte characters.
-
-     -s          Suppresses lines with no field delimiter characters.  Unless
-                 specified, lines with no delimiters are passed through unmodified.
-                 
-
 
 sed
 
