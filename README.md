@@ -4,7 +4,6 @@ A text file encryption application
 <img src="images/lynxMeganLorenz.jpg" width="600px" height="400px">
 Wild Canadian Lynx photographed by Megan Lorenz <br /><br />
 
-I chose to implement this encryption module in C to make use of the well supported bitwise operations specifically the bitwise XOR which is commonly used in ciphers because it is secure with nonrepetitive keys, computationally inexpensive, and easy to reverse.
 <br /><br />
 
 
@@ -20,6 +19,8 @@ These ARX operations are popular because they are relatively fast and cheap in h
 
 ### Choice of languages
 I chose to use C to implement the encrypt and decrypt functions because I wanted to work at the lowest level possible when performing bitwise operations. C has good support for bitwise operations but more importantly C allows one to write assembler directives inline which is how I implemented the XOR function on each byte of the plaintext. Implementing the encrypt and decrypt functions in C with inline assembler directives for the XOR operation will greatly increase performance with large ciphertexts. 
+
+I chose to implement this encryption module in C to make use of the well supported bitwise operations specifically the bitwise XOR which is commonly used in ciphers because it is secure with nonrepetitive keys, computationally inexpensive, and easy to reverse.
 
 
 #### Strengths of Lynx
@@ -305,4 +306,10 @@ sed
 
 awk 
 
+### integrating Java and C
+
+Split them in independent parts and develop independently. I assume that your main program is written in Java and C is used for some low-level hardware glue. If I am correct, than I advise you to:
+1. create a library in C
+2. test it using Check (an excellent unit test framework for C) 
+3. use JNI to access this library from Java
 

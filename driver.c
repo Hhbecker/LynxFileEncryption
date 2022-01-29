@@ -13,6 +13,7 @@
 int main(void){
 
     printf("\n -- WELCOME TO LYNX ENCRYPTION -- \n\n");
+    printf("This application is MIT licensed. Author: Henry Becker Jan 2022\n\n");
 
     // call the prompt user function
     promptUser();
