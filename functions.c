@@ -1,98 +1,139 @@
-#include "header.h"  
+/*
+Functional methods for the Lynx Encryption Module.
+Author: Henry Becker
+Date: 2/2/22
+This application is MIT licensed.
+*/
+
 #include <stdio.h>    
 #include <stdlib.h>
 #include <string.h>
-#include <glob.h>
-#include <stdbool.h>
-#include <assert.h>
 
+// link to Header file "hashmap.h" which contains functions headers
+#include "header.h" 
+
+// encrypt: open file requested by user, create binary file with .lynx extension, encrypt each char 
+// of text file and write encrypted binary to binary file without altering text file, close both files
+// input: char pointer to filename of user requested text file
+// returns: void
 void encrypt(char* txtFile){
 
     // use string functions to create encrypted binary filename from user input filename
     char* binFile = strdup(txtFile);
+    // save all characters of filename before the first "." character into the binFile variable
     binFile = strtok(binFile, ".");
+    // add the ".lynx" extension to the filename
     strcat(binFile, ".lynx");
 
+    // create file pointers for both the text and binary file
     FILE *fp;
     FILE *fpBin;
 
-    fp = fopen (txtFile, "r") ; // opening an existing file in r mode
+    // open text file in read mode
+    fp = fopen (txtFile, "r") ; 
    
+    // make sure file is succesfully opened
     if ( fp == NULL ){
         printf ("Could not open plaintext file\n");
         return;
     }
 
-    fpBin = fopen(binFile, "wb");  // w for write, b for binary
+    // open binary file in write binary mode
+    fpBin = fopen(binFile, "wb"); 
 
+    // make sure binary file was succesfully opened
     if ( fpBin == NULL ){
         printf ("Could not open binary file\n");
         return;
     }
 
-    char asChar; // unsigned 8 bit integer typedef
+    // create variable to hold current character from the text file 
+    char currentChar; 
 
-    // pass in seed it returns next seed 
-    // first seed you pass in is file creation time
-    int seed = getSeed(binFile);
+    // get number generator seed which is the creation time of the binary file held by the OS
+    int key = (int8_t) getSeed(binFile);
 
-    if(seed < 0 || seed > 60){
+    // the seed is currently supposed to be the seconds of the hours:minutes:seconds of the creation time
+    // if the seconds is not between 0-60 something went wrong
+    if(key < 0 || key > 60){
         printf("Seed retrieval error\n");
         return;    
     }
-
-    // set first key as seed
-    int key = seed;
 
     printf("\n\n...ENCRYPTION IN PROGRESS...\n") ;
 
     // iterate through each char in the text file
     while(1){
-        asChar = fgetc(fp) ; // because the EOF constant is negative 1 a comparison to an unsigned uint8_t will always be false so we need to pass the character into a signed data type first for comparison to the EOF constant 
-        if(asChar == EOF){
+        // set currentChar var to the next char in the input buffer using fgetc()
+        currentChar = fgetc(fp); 
+        // if the current char equals -1 (the end of file ) break loop
+        if(currentChar == EOF){
             break;
         }
         else {
 
+            // perform calculation to produce pseudorandom key 
             key = getKey(key);
     
-            asChar = key ^ asChar;
-            
+            // XOR the key with the current char
+            // currentChar = key ^ currentChar; (non assembly implementation)
+
+            // assembly implementation of bitwise XOR on char and key
+            // xorb = xor opcode on a single byte of data 
+            // %%bl = lowest 8 bits of general purpose register EBX (source register)
+            // %%al = lowest 8 bits of general purpose register EAX (source register/destination register)
+            // first line following colon is output info
+            // second line following colon is input info
+            // =a is assigning the destination register of the computation to the "currentChar" variable
+            // see the below site for more information
+            // https://www.codeproject.com/Articles/15971/Using-Inline-Assembly-in-C-C
+
+            //////////////////////////////////
+            __asm__ ( "xorb %%bl, %%al;"
+            : "=a" (currentChar)
+            : "a" (currentChar), "b" (key) );
+            //////////////////////////////////
+
             //&intByte gets address of int in memory and passes that address to fwrite
-            fwrite(&asChar, sizeof(asChar), 1, fpBin);      
+            fwrite(&currentChar, sizeof(currentChar), 1, fpBin);      
         }
     }
 
+    // close both file pointers
     fclose(fp);
     fclose(fpBin);
     
     printf("An encrypted binary version of your file has been created.\n\nEncrypted file contents:\n");
     
+    // use string splitting to create the necessary terminal command to print binary in a sleek format using xxd function 
+    //system("xxd -b fileName | cut -d: -f 2 | sed 's/  .*//'");
     char str[100];
     strcpy(str, "xxd -b ");
     strcat(str, binFile);
     strcat(str, " | cut -d: -f 2 | sed 's/  .*//'");    
     system(str);
-
-    //system("xxd -b testDir/test.bin | cut -d: -f 2 | sed 's/  .*//'");
     printf("\n");
 
 }
 
+// decrypt: open binary file requested by user, create text file, decrypt each byte 
+// of binary file and write corresponding ascii to text file without altering binary file, close both files
+// input: char pointer to filename of user requested binary file
+// returns: void
 void decrypt(char* binFile){
 
-    // this is where you would take in user input of filename to be encrypted
-    //char* txtFile = "testDir/gibberishDecrypt.txt";
-    //char* binFile = "testDir/test.bin";
-
-    // use string functions to create encrypted binary filename from user input filename
+    // use string functions to create unencrypted text filename from user input binary filename
     char* txtFile = strdup(binFile);
+    // save all characters of filename before the first "." character into the txtFile variable
     txtFile = strtok(txtFile, ".");
+    // add the ".txt" extension to the filename 
     strcat(txtFile, ".txt");
 
+    // create file pointers for both text and binary file
     FILE *fp;
     FILE *fpBin;
 
+    // open text file in write mode
     fp = fopen (txtFile, "w") ; // opening a file in r mode
    
     if ( fp == NULL ){
@@ -116,9 +157,9 @@ void decrypt(char* binFile){
         return;    
     }
 
-    int key = seed;
+    int8_t key = (int8_t) seed;
     
-    char asChar;
+    char currentChar;
 
     int putcResult;
     
@@ -127,19 +168,24 @@ void decrypt(char* binFile){
     printf("Your file has been converted back to plaintext format. \n\nDecrypted file contents:\n\"");
 
     while(1){
-        asChar = fgetc(fpBin) ; 
-        if(asChar == EOF){   // EOF constant is -1
+        currentChar = fgetc(fpBin) ; 
+        if(currentChar == EOF){   // EOF constant is -1
             break;
         }
         else {
 
             key = getKey(key);
 
-            asChar = key ^ asChar;
+            // currentChar = key ^ currentChar; (non assembly implementation)
+
+            // assembly implementation of bitwise XOR on char and key
+            __asm__ ( "xorb %%bl, %%al;"
+            : "=a" (currentChar)
+            : "a" (currentChar), "b" (key) );
             
             //&intByte gets address of int in memory and passes that address to fwrite
-            putcResult = fputc(asChar, fp);   
-            printf("%c", asChar);   
+            putcResult = fputc(currentChar, fp);   
+            printf("%c", currentChar);   
         }
     }
 
@@ -157,8 +203,8 @@ void decrypt(char* binFile){
     // next iteration.
 
 
-int getKey(int currentKey){
-    int newKey = (currentKey*currentKey)/2;
+int8_t getKey(int8_t currentKey){
+    int8_t newKey = (currentKey*currentKey)/2;
     return (newKey - 5);
 }
 
