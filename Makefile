@@ -1,4 +1,4 @@
-.PHONY: clean build all
+.PHONY: clean build all 
 
 # compilation settings
 CC = gcc

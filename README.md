@@ -7,6 +7,35 @@ Wild Canadian Lynx photographed by Megan Lorenz <br /><br />
 <br /><br />
 
 
+# To Do
+* close open file before returning from file can't be opened error
+* comment all code 
+* run speedup tests using proj 6 code to test difference between assembly and C xor implementation
+* remove uneccessary libs from each file
+
+* put uneccessary cybersecurity info into notes repo
+* include GUI template drawing and use it to explain control flow (don't make it too complicated)
+
+
+### Things to explain 
+* concept of pseudorandom number generator 
+* concept of a seed and where you get the seed 
+* the reversibility of bitwise XOR
+* make explanation of keyboard input as ascii which is converted to binary that's stored in a 32 bit space (explain address size, addressability, word size, and byte addressible) (is 8 bits one byte the smallest addressable space in my computer?)
+* this is more of a proof of concept and I didn't want to spend to long on any one part beacuse nobody is actually going to use this.
+
+
+### Highlights for me
+1. Using inline assembly for the first (but not the last) time
+2. Learning more about the system command, sed, grep, and regex in order to use them
+3. Learning more about ciphers, pseudorandom number generation, and the points of failure in different encryption strategies
+3. making the ascii art lynx 
+
+## choosing a seed
+The seed is the creation time of the binary file (not the text file). It is important to note that some editors (inlcuding vim) will create an entirely new file during the edit process so if a user was to edit the binary file the seed would be lost and the encrypted data is no longer unencryptable (practically speaking of course). 
+
+
+
 #### Overflow 
 If overflow occurs the original text will be lost and unrecoverable. The data type that stores the plaintext as well as the ciphertext is of a fixed size. If an operation during the cipher causes overflow the inverse of that operation will not necessarily return the original plaintext.
 
@@ -292,6 +321,8 @@ seed is set by file timestamp which is changed if file is edited by vim because 
 
 filename generator separates file extension by finding first "." character so if there are more than one "." characters in a filename it will change the filename incorrectly.
 
+It can take non .txt files which I think is a problem?
+
 
 "GetFileInfo fileName.txt | sed -n 5p | cut -d ':' -f 4 > seedTemp.txt"
 
@@ -305,6 +336,8 @@ Divide a file into several parts.
 sed
 
 awk 
+
+The leaks command line tool is a possible valgrind alternative
 
 ### integrating Java and C
 
