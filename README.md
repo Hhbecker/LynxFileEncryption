@@ -8,21 +8,41 @@ Wild Canadian Lynx photographed by Megan Lorenz <br /><br />
 
 
 # To Do
-* close open file before returning from file can't be opened error
-* comment all code 
-* run speedup tests using proj 6 code to test difference between assembly and C xor implementation
-* remove uneccessary libs from each file
-
 * put uneccessary cybersecurity info into notes repo
-* include GUI template drawing and use it to explain control flow (don't make it too complicated)
+
+* run speedup tests using proj 6 code to test difference between assembly and C xor implementation
+
+## Overview
+The Lynx file encryption system was designed for efficient and reliable encryption of sensitive text data on a user's machine. I created this application in order to learn more about different encryption strategies, their strengths, and their weaknesses. I originally became curious after realizing I did not understand how the icloud keychain stored my passwords and other sensitive information. 
+
+This project is really a proof of concept and a learning exercise. I did not spend too long on any one feature of the program so there are several weaknesses which I will discuss later.
+
+<img src="images/controlFlow.jpeg" width="600px" height="400px">
+
+### What is encryption?
+
+### What is a block vs stream cipher 
+
+### What is the OTP cipher 
+
+Show XOR assembly 
+
+Show the reversibility of the XOR
+
+### What is pseudorandom number generation
+What was Von neumman's technique. 
+
+### What is my strategy for secret seed generation?
+binary file creation time - seed must be secret - seed could be added into the file but then if its edited the info would be lost
+
+Show bash command 
+
+Show seed generation formula (or switch to using von neumanns) 
+
+### keyboard to binary explanation
+make explanation of keyboard input as ascii which is converted to binary that's stored in a 32 bit space (explain address size, addressability, word size, and byte addressible) (is 8 bits one byte the smallest addressable space in my computer?)
 
 
-### Things to explain 
-* concept of pseudorandom number generator 
-* concept of a seed and where you get the seed 
-* the reversibility of bitwise XOR
-* make explanation of keyboard input as ascii which is converted to binary that's stored in a 32 bit space (explain address size, addressability, word size, and byte addressible) (is 8 bits one byte the smallest addressable space in my computer?)
-* this is more of a proof of concept and I didn't want to spend to long on any one part beacuse nobody is actually going to use this.
 
 
 ### Highlights for me
@@ -34,10 +54,43 @@ Wild Canadian Lynx photographed by Megan Lorenz <br /><br />
 ## choosing a seed
 The seed is the creation time of the binary file (not the text file). It is important to note that some editors (inlcuding vim) will create an entirely new file during the edit process so if a user was to edit the binary file the seed would be lost and the encrypted data is no longer unencryptable (practically speaking of course). 
 
+#### Using inode data for seed
+The inode (index node) is a data structure in a Unix-style file system that describes a file-system object such as a file or a directory. Each inode stores the attributes and disk block locations of the object's data.[1] File-system object attributes may include metadata (times of last change,[2] access, modification), as well as owner and permission data.[3]
+
+## Inline x86 assembly
+https://www.codeproject.com/Articles/15971/Using-Inline-Assembly-in-C-C
+
+https://www.eecg.utoronto.ca/~amza/www.mindsec.com/files/x86regs.html
+
+
+    // An early computer-based PRNG, suggested by John von Neumann in 1946, 
+    // is known as the middle-square method. The algorithm is as follows: 
+    // take any number, square it, remove the middle digits of the resulting 
+    // number as the "random number", then use that number as the seed for the 
+    // next iteration.
+
+#### Issues 
+seed is set by file timestamp which is changed if file is edited by vim because vim creates a new file each time you edit.
+
+filename generator separates file extension by finding first "." character so if there are more than one "." characters in a filename it will change the filename incorrectly.
+
+It can take non .txt files which I think is a problem?
+
+
+The leaks command line tool is a possible valgrind alternative
+
+### integrating Java and C
+
+Split them in independent parts and develop independently. I assume that your main program is written in Java and C is used for some low-level hardware glue. If I am correct, than I advise you to:
+1. create a library in C
+2. test it using Check (an excellent unit test framework for C) 
+3. use JNI to access this library from Java
+
+
 
 
 #### Overflow 
-If overflow occurs the original text will be lost and unrecoverable. The data type that stores the plaintext as well as the ciphertext is of a fixed size. If an operation during the cipher causes overflow the inverse of that operation will not necessarily return the original plaintext.
+If overflow occurs the original text will be lost and unrecoverable. The data type that stores the plaintext as well as the ciphertext is of a fixed size. If an operation during the cipher causes overflow the inverse of that operation will not necessarily return the original plaintext. Arithmatic (logical?) shifts cannot be used for this reason.
 
 #### Background
 A block cipher consists of two paired algorithms, one for encryption, E, and the other for decryption, D.[1] Both algorithms accept two inputs: an input block of size n bits and a key of size k bits; and both yield an n-bit output block. The decryption algorithm D is defined to be the inverse function of encryption, i.e., D = E−1. More formally,[2][3] a block cipher is specified by an encryption function
@@ -47,7 +100,7 @@ Many modern block ciphers and hashes are ARX algorithms—their round function i
 These ARX operations are popular because they are relatively fast and cheap in hardware and software, their implementation can be made extremely simple, and also because they run in constant time, and therefore are immune to timing attacks. The rotational cryptanalysis technique attempts to attack such round functions.
 
 ### Choice of languages
-I chose to use C to implement the encrypt and decrypt functions because I wanted to work at the lowest level possible when performing bitwise operations. C has good support for bitwise operations but more importantly C allows one to write assembler directives inline which is how I implemented the XOR function on each byte of the plaintext. Implementing the encrypt and decrypt functions in C with inline assembler directives for the XOR operation will greatly increase performance with large ciphertexts. 
+I chose to use C to implement the encrypt and decrypt functions because I wanted to work at the lowest level possible when performing bitwise operations. C has good support for bitwise operations but more importantly the gcc C compiler allows one to write AT&T style x86 assembly opcodes inline within C functions. which is how I implemented the XOR function on each byte of the plaintext. Implementing the encrypt and decrypt functions in C with inline assembly significantly improved performance with large ciphertexts. The results of the tests are below 
 
 I chose to implement this encryption module in C to make use of the well supported bitwise operations specifically the bitwise XOR which is commonly used in ciphers because it is secure with nonrepetitive keys, computationally inexpensive, and easy to reverse.
 
@@ -59,27 +112,15 @@ I chose to implement this encryption module in C to make use of the well support
 #### Stream cipher
 Simply put, a stream cipher uses a cryptographically secure psuedorandom number generator (CSPRNG) to produce a key stream of arbitrary length, and then uses the resultant psuedorandom information to encrypt the plaintext by combining the two.
 
-#### Current cipher idea
-1. add either 1 or zero to each bit of the byte depending on key
-2. XOR each byte with key
-3. perform a wrap around bit shift of each byte based on key
-
 #### To create and retrieve key for a given file
 1. create binary file during encryption process
 2. use seconds of file creation time as seed for key during encryption
-3. retrievre seconds of file creation as seed for key during decryption
-
-### Create a java gui to sit on top of the c
-
-### implement cipher bit operations in assembly 
+3. retrieve seconds of file creation as seed for key during decryption
 
 ## Add (Caesar Cipher)
 Casaer shifted each letter in his military commands to make them appear meaningless to the enemy if they were intercepted. The weakness of the ceasar cipher is that each letter in any language has a given fre   uency of use. This use frequency can be thought of as the language's fngerprint. By comparing frequencies of cipher letters to the known freuency of letters in the language being encrypted with enough data one can determine the shift used to encrypt the original message. This is known as frequency analysis and is the most important weakness of the Caesar cipher.
 
 Each letter in a message is shifted to one of twenty six possible letters. Therefore, there are 26 possible combinations for any message encrypted using the Caesar Cipher.
-
-## Rotate (Bit Shift) 
-
 
 ## XOR (Viginere Cipher) 
 Because there is no pseudorandom number function I could implement a pseudorandom number generator in assembly to create a OTP like cipher. Additionally, the Viginere cipher could be used which is a less secure predecessor to the OTP method. The Viginere cipher uses the XOR operation based on an input key to encrypt the message. 
@@ -96,7 +137,7 @@ The XOR operator is extremely common as a component in more complex ciphers. By 
 If the key is random and is at least as long as the message, the XOR cipher is much more secure than when there is key repetition within a message.[4] When the keystream is generated by a pseudo-random number generator, the result is a stream cipher. With a key that is truly random, the result is a one-time pad, which is unbreakable in theory.
 
 
-# The calculations change if you're using alphanumeric or all ascii !!!!!
+# Calculate the number of possibilities of your cipher
 
 ## Perfect Secrecy
 A cipher strategy accomplishes perfect secrecy if an attacker can not glean any additional information about the original message when given the ciphertext.
@@ -118,10 +159,14 @@ AES-256, which has a key length of 256 bits, supports the largest bit size and i
 
 #### elliptical curve asymetric cryptography
 
+### SLS encryption
+
 #### key wrapping
 
 AES (Advanced Encryption Standard) and DES (Data Encryption Standard)
 
+SHA hashing (SHA stands for Secure Hashing Algorithm)
+Private key cryptography - communication 
 
 confusion and diffusion are two properties of the operation of a secure cipher which were identified by Claude Shannon in his paper Communication Theory of Secrecy Systems, published in 1949.
 
@@ -155,81 +200,15 @@ Credit car number, security code, and expiration date = block cipher because the
 Thank you to Brit Cruise for the Kahn Academy cryptography course from which much of the below information was gathered. You can find the course here: https://www.khanacademy.org/computing/computer-science/cryptography/crypt/v/caesar-cipher
 
 
-Private key cryptography - communication 
 
-# To Do
-* decide which ciphers you're actually going to implement 
-* there is no random number genrator in assembly so maybe a real OTP is a waste of time
-* restructure beginning section where user enters key and key is checked 
-* explain specs in README 
-* tkae notes in OTP encryption and icloud keychain 
-
-* maybe split each cipher into different files 
-
-* echo a * if you can for each letter typed for the key or message 
-
-* make test cases 
-* make a diagram of the project flow 
-* make a written explanation of the encryption and decryption of a test case 
-
-* instead of combining the three ciphers maybe prompt the user for either a ceasar, OTP, or bit shift or combination
-
-How to write portable assembly code 
-
-How to write portable c code 
-https://nullprogram.com/blog/2017/03/30/
-
-https://www.informit.com/articles/article.aspx?p=1620206
+On a real application, the username and password information would be hashed and sent to a file on a remote server in a secure network but as a proxy I could just use a hidden file on the user's computer.
 
 
-## 2 questions
-1. How to make a secure encryption (OTP vs ARX and block vs stream)
-2. How to make a secure hash 
-
-If you want to add login info you could save hashed password to invisible file and check entered passwords against saved hashed password.
-
-On a real application, the username and password information would be hashed and sent to a file on a remote server in a secure network but as a proxy I'm just going to use a hidden file on the user's computer.
 
 
-AES encryption (AES stands for Advanced Encryption Standard)
-SHA hashing (SHA stands for Secure Hashing Algorithm)
 
-C implementation notes
-* C opens, encrypts, and closes file 
-
-* block or stream cipher? the msg could be of any length
-
-Options:
-* OTP encryption with from scratch pseudorandom number generator 
-* ARX block cipher
-
-Input e for encrypt, d for decrypt, and x to exit 
-
-extended asm - writing assembly in c code
-https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html
-
-How to hide files on a mac 
-https://www.howtogeek.com/211496/how-to-hide-files-and-view-hidden-files-on-mac-os-x/#:~:text=Hide%20a%20File%20or%20Folder%20on%20a%20Mac&text=Drag%2Dand%2Ddrop%20a%20folder,file%20or%20folder%20will%20vanish.
-
-
-Make encryption and decryption algorithms and make them work on any text file
-
-START WITH BARE BONES, add features later
--decide what bare bones features are
-
-Explain thought process in readme
--wanted to make a way to encrypt my passwords on my computer similar to what icloud keychain does
--block or stream cipher?
--how to obscure repetitive password username encryption 
--how would this work on a different keyboard?
--enter password to get into your account, enter filename of encrypted file and it will decrypt it, if you input unencrypted file it will reject it  
--input recovery email which will get password sent to it if password is forgotten 
-
-
-Understand the difference between how paswswords are treated and how sensitive data is treated.
-Supposedly passwords are hashed but sensitive data is encrypted 
-
-I could use my search engine hash table for lynx to hash the password. 
+### The difference between how paswswords are treated and how sensitive data is treated
+Passwords are hashed but sensitive data is encrypted 
 
 How does the application authenticate a user with a password hash?
 When the application receives a username and password from a user, it performs the hashing operation on the password and compares the resulting hashed value with the password hash stored in the database for the particular user. If the two hashes are an exact match, the user provided a valid username and password.
@@ -313,36 +292,4 @@ Hashes aren’t hackproof, though. All an attacker has to do is run a dictionary
 Also note that it is standard practice for every header file is to define a macro of the same name (IN CAPS), and enclose the entire header between #ifndef, #endif. In C, this prevents a header from getting #included twice. This is known as the "internal include guard" (with thanks to Story Teller for pointing that out). All system headers such as stdio.h include an internal include guard. All user defined headers should also include an internal include guard as shown in the example below.
 
 
-#### Using inode data for seed
-The inode (index node) is a data structure in a Unix-style file system that describes a file-system object such as a file or a directory. Each inode stores the attributes and disk block locations of the object's data.[1] File-system object attributes may include metadata (times of last change,[2] access, modification), as well as owner and permission data.[3]
-
-#### Issues 
-seed is set by file timestamp which is changed if file is edited by vim because vim creates a new file each time you edit.
-
-filename generator separates file extension by finding first "." character so if there are more than one "." characters in a filename it will change the filename incorrectly.
-
-It can take non .txt files which I think is a problem?
-
-
-"GetFileInfo fileName.txt | sed -n 5p | cut -d ':' -f 4 > seedTemp.txt"
-
-xxd -b testDir/test.bin | cut -d: -f 2 | sed 's/  .*//'
-
-grep
-
-#### cut
-Divide a file into several parts.
-
-sed
-
-awk 
-
-The leaks command line tool is a possible valgrind alternative
-
-### integrating Java and C
-
-Split them in independent parts and develop independently. I assume that your main program is written in Java and C is used for some low-level hardware glue. If I am correct, than I advise you to:
-1. create a library in C
-2. test it using Check (an excellent unit test framework for C) 
-3. use JNI to access this library from Java
 
