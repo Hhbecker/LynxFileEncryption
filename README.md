@@ -17,7 +17,7 @@ The Lynx file encryption system was designed for efficient and reliable encrypti
 
 This project is really a proof of concept and a learning exercise. I did not spend too long on any one feature of the program so there are several weaknesses which I will discuss later.
 
-<img src="images/controlFlow.jpeg" width="600px" height="400px">
+<img src="images/controlFlow.jpeg">
 
 ### What is encryption?
 
