@@ -8,6 +8,7 @@ Wild Canadian Lynx photographed by Megan Lorenz <br /><br />
 
 
 # To Do
+* fix -1 bug
 * make a typescript of the output of a shorter quote (and include it in the test file)
 * make a secret message binary file in test files
 * finish readme explanations
@@ -103,6 +104,8 @@ Say you want to encrypt a 10 letter message. Because there are 26 letters in the
 3. Learning more about ciphers, pseudorandom number generation, and the points of failure in different encryption strategies
 3. making the ascii art lynx 
 
+writing system calls to get the file creation date from the os 
+
 
 #### Weaknesses 
 * The seed is set by file timestamp which is changed if file is edited by vim because vim creates a new file each time you edit.
@@ -117,7 +120,10 @@ Say you want to encrypt a 10 letter message. Because there are 26 letters in the
 If you encrypt an already encrypted file you can't unencrypt that file because of the file name issues?
 
 ### Testing Instructions
-If you are using an intel based mac running OSX Big Sur there is a chance this might also work on your machine (C with inline assembly is from my understanding almost never portable). Download the SRC directory and `cd` into it. run `make` to create the "lynx" executable. Run `./lynx` to run the executable. The testFiles directory contains .txt files that can be used to test encryption and decryption. Make sure to include the directory before the file name (for example: `testDir/200wordTest.txt`). 
+If you are using an intel based mac running OSX Big Sur there is a chance this might also work on your machine (C with inline assembly is from my understanding almost never portable). Download the SRC directory and `cd` into it. run `make` to create the "lynx" executable. Run `./lynx` to run the executable. The testFiles directory contains .txt files that can be used to test encryption and decryption. Make sure (when prompted) to include the directory before the file name (for example: `testFiles/200wordTest.txt`). 
+
+### Best Bug Fix
+There were many satsifying bug fixes throughout the development of this project but the most entertaining was what I will call the -1 bug.
 
 ### Sources:
 https://www.khanacademy.org/computing/computer-science/cryptography/crypt/v/caesar-cipher

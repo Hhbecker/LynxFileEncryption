@@ -121,8 +121,7 @@ void encrypt(char* txtFile){
     strcpy(str2, " | cut -d: -f 2 | sed 's/  .*//'");
     strcat(str, str2);
     //printf("System command is: %s\n", str); 
-   
-    //system(str);
+    system(str);
     printf("\n");
 
 }
