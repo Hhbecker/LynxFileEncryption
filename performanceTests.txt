@@ -1,0 +1,46 @@
+This file contains the results of performance tests comparing an 
+assembly and C implementation of the XOR function in the encrypt 
+method of the Lynx Encryption application.
+
+Author: Henry Becker
+Date: 2/4/2022
+
+//////////////////////////////
+
+ASM Test:
+
+200 Words
+
+rusage time = 124
+rdtsc time = 1343494
+
+1000 Words
+
+rusage time = 589
+rdtsc time = 3351542
+
+5000 Words
+
+rusage time = 2410
+rdtsc time = 7720764
+
+//////////////////////////////
+
+C Test:
+
+200 Words
+
+rusage time = 123
+rdtsc time = 1267690
+
+1000 Words
+
+rusage time = 591
+rdtsc time = 3083578
+
+5000 Words
+
+rusage time = 2743
+rdtsc time = 8542728
+
+

@@ -8,58 +8,9 @@ This application is MIT licensed.
 #include <stdio.h>    
 #include <stdlib.h>
 #include <string.h>
-#include <sys/time.h>
-#include <sys/resource.h>
 
 // link to Header file "hashmap.h" which contains functions headers
 #include "header.h" 
-
-
-/* Below are statements to set up the performance measurement utilities */
-/* we use rdtsc, clock, and getusage utilities to measure performance */
-
-//#define rdtscll(val) __asm__ __volatile__("rdtsc" : "=A" (val))
-#if defined(__i386__)
-
-static __inline__ unsigned long long rdtsc(void)
-{
-  unsigned long long int x;
-     __asm__ volatile (".byte 0x0f, 0x31" : "=A" (x));
-     return x;
-}
-#elif defined(__x86_64__)
-
-
-static __inline__ unsigned long long rdtsc(void)
-{
-  unsigned hi, lo;
-  __asm__ __volatile__ ("rdtsc" : "=a"(lo), "=d"(hi));
-  return ( (unsigned long long)lo)|( ((unsigned long long)hi)<<32 );
-}
-#endif
-
-/* end of definitions to set up measurement utilities */
-
-/* the getUserTime function is used for measurement, you should not change the code for this function */
-
-static long int getUserTime()
-{
-	int who= RUSAGE_SELF;
-	int ret;
-	struct rusage usage;
-	struct rusage *p=&usage;
-	//long int current_time;
-
-	ret=getrusage(who,p);
-	if(ret == -1)
-	{
-		printf("Could not get GETRUSAGE to work in function %s at line %d in file %s\n",
-				__PRETTY_FUNCTION__, __LINE__, __FILE__);
-		exit(1);
-	}
-	return (p->ru_utime.tv_sec * 1000000 + p->ru_utime.tv_usec);
-}
-
 
 // encrypt: open file requested by user, create binary file with .lynx extension, encrypt each char 
 // of text file and write encrypted binary to binary file without altering text file, close both files
@@ -116,23 +67,6 @@ void encrypt(char* txtFile){
 
     printf("\n\n...ENCRYPTION IN PROGRESS...\n") ;
 
-
-
-
-    ///////////////////////////////////
-	/* the variables below are used for performance measurement */
-	long int rusage_start_time = 0;
-    long int rusage_end_time = 0;
-    unsigned long long rdtsc_start_time = 0;
-    unsigned long long rdtsc_end_time = 0;
-
-	/* call system functions to start measuring performance */
-    rusage_start_time = getUserTime();
-	rdtsc_start_time = rdtsc();
-    ///////////////////////////////////
-
-
-
     // iterate through each char in the text file
     while(1){
         // set currentChar var to the next char in the input buffer using fgetc()
@@ -148,7 +82,7 @@ void encrypt(char* txtFile){
     
 
             // XOR the key with the current char
-            // currentChar = key ^ currentChar; (non assembly implementation)
+            //currentChar = key ^ currentChar; // (non assembly implementation)
 
             // assembly implementation of bitwise XOR on char and key
             // xorb = xor opcode on a single byte of data 
@@ -171,16 +105,6 @@ void encrypt(char* txtFile){
         }
     }
 
-    /* the remaining lines in this function stop the measurement and set the values before returning */
-	rusage_end_time = getUserTime();
-    rdtsc_end_time = rdtsc();
-
-	rusage_end_time = rusage_end_time - rusage_start_time;
-	rdtsc_end_time = rdtsc_end_time - rdtsc_start_time;
-
-    printf("\nrusage time = %ld\n", rusage_end_time);
-    printf("\nrdtsc time = %llu\n\n", rdtsc_end_time);
-
     // close both file pointers
     fclose(fp);
     fclose(fpBin);
@@ -196,9 +120,9 @@ void encrypt(char* txtFile){
     char str2[40];
     strcpy(str2, " | cut -d: -f 2 | sed 's/  .*//'");
     strcat(str, str2);
-    printf("System command is: %s\n", str); 
+    //printf("System command is: %s\n", str); 
    
-    system(str);
+    //system(str);
     printf("\n");
 
 }

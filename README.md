@@ -8,8 +8,8 @@ Wild Canadian Lynx photographed by Megan Lorenz <br /><br />
 
 
 # To Do
-* save assembly vs C code time for 3 trials in script files (rename and move typescript files in between each run)
-* make a test directory with a test txt and binary file
+* make a typescript of the output of a shorter quote (and include it in the test file)
+* make a secret message binary file in test files
 * finish readme explanations
 
 The Lynx file encryption system dgitizes the OTP encryption technqiue to efficiently and reliably encrypt sensitive text data. I created this application while learning about different encryption strategies, their strengths, and their weaknesses. I got curious about encryption after realizing I didn't know how the icloud keychain stored my passwords and other sensitive information. This project is really just a proof of concept and a learning exercise. I did not spend too long on any one feature so there are several weaknesses which I'll discuss later. I've included my design plans, an explanation of my impelmentation, example input/output, and notes on what I learned during the process. I hope you enjoy!
@@ -58,6 +58,8 @@ I think it is so cool that C has support for inline assembly. Because I have an 
 `%%al` = destination register (also a source register) is the lowest 8 bits of the general purpose EAX register <br />
 `: "=a" (currentChar)` = save results of register a (low byte of EAX) into the currentChar variable <br />
 `: "a" (currentChar), "b" (key) )` = save the value of the currentChar variable into register a and the value of the key variable key into register b <br />
+
+I was hoping for a massive speedup using assembly but after testing the time and cycles I found the assembly was 
 
 I used the following resources when implementing this inline assembly:
 https://www.codeproject.com/Articles/15971/Using-Inline-Assembly-in-C-C
@@ -112,6 +114,10 @@ Say you want to encrypt a 10 letter message. Because there are 26 letters in the
 * It is not portable at all because it uses c and intel based assembly. 
 * it is susceptible to brute force attacks based on the processing power of modern computers.
 
+If you encrypt an already encrypted file you can't unencrypt that file because of the file name issues?
+
+### Testing Instructions
+If you are using an intel based mac running OSX Big Sur there is a chance this might also work on your machine (C with inline assembly is from my understanding almost never portable). Download the SRC directory and `cd` into it. run `make` to create the "lynx" executable. Run `./lynx` to run the executable. The testFiles directory contains .txt files that can be used to test encryption and decryption. Make sure to include the directory before the file name (for example: `testDir/200wordTest.txt`). 
 
 ### Sources:
 https://www.khanacademy.org/computing/computer-science/cryptography/crypt/v/caesar-cipher
