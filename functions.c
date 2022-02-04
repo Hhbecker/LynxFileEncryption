@@ -35,6 +35,7 @@ void encrypt(char* txtFile){
     // make sure file is succesfully opened
     if ( fp == NULL ){
         printf ("Could not open plaintext file\n");
+        fclose(fp);
         return;
     }
 
@@ -44,6 +45,8 @@ void encrypt(char* txtFile){
     // make sure binary file was succesfully opened
     if ( fpBin == NULL ){
         printf ("Could not open binary file\n");
+        fclose(fp);
+        fclose(fpBin);
         return;
     }
 
@@ -57,6 +60,8 @@ void encrypt(char* txtFile){
     // if the seconds is not between 0-60 something went wrong
     if(key < 0 || key > 60){
         printf("Seed retrieval error\n");
+        fclose(fp);
+        fclose(fpBin);
         return;    
     }
 
@@ -135,50 +140,61 @@ void decrypt(char* binFile){
 
     // open text file in write mode
     fp = fopen (txtFile, "w") ; // opening a file in r mode
-   
+
+    // make sure binary file was succesfully opened 
     if ( fp == NULL ){
         printf ("Could not open plaintext file\n");
+        fclose(fp);
         return;
     }
 
-    fpBin = fopen(binFile, "r");  // r for read, b for binary
+    // open binary file in write 
+    fpBin = fopen(binFile, "rb");  // r for read, b for binary
 
+    // make sure binary file was succesfully opened 
     if ( fpBin == NULL ){
         printf ("Could not open binary file\n");
+        fclose(fp);
+        fclose(fpBin);
         return;
     }
 
-    // pass in seed it returns next seed 
-    // first seed you pass in is file creation time
-    int seed = getSeed(binFile);
+    // set initial key to seed
+    int8_t key = (int8_t) getSeed(binFile);
 
-    if(seed < 0 || seed > 60){
+    // if key is not within 0-60 seconds something went wrong
+    if(key < 0 || key > 60){
         printf("Seed retrieval error\n");
+        fclose(fp);
+        fclose(fpBin);
         return;    
     }
-
-    int8_t key = (int8_t) seed;
     
+    // create variable to hold current character from the text file 
     char currentChar;
 
+    // create return value variable for putc function
     int putcResult;
     
     printf("\n\n...DECRYPTION IN PROGRESS...\n");
 
     printf("Your file has been converted back to plaintext format. \n\nDecrypted file contents:\n\"");
 
+    // iterate through each char in the text file
     while(1){
+        // assign next byte in getchar buffer to currentChar variable
         currentChar = fgetc(fpBin) ; 
-        if(currentChar == EOF){   // EOF constant is -1
+        // EOF constant is -1
+        if(currentChar == EOF){   
             break;
         }
         else {
-
+            // perform computation on key to get next pseudorandom key
             key = getKey(key);
 
             // currentChar = key ^ currentChar; (non assembly implementation)
 
-            // assembly implementation of bitwise XOR on char and key
+            // assembly implementation of bitwise XOR on char and key (see encrypt function for more info)
             __asm__ ( "xorb %%bl, %%al;"
             : "=a" (currentChar)
             : "a" (currentChar), "b" (key) );
@@ -189,6 +205,7 @@ void decrypt(char* binFile){
         }
     }
 
+    // close both text and binary files
     fclose(fp);
     fclose(fpBin);
 
@@ -196,21 +213,20 @@ void decrypt(char* binFile){
 
 }
 
-    // An early computer-based PRNG, suggested by John von Neumann in 1946, 
-    // is known as the middle-square method. The algorithm is as follows: 
-    // take any number, square it, remove the middle digits of the resulting 
-    // number as the "random number", then use that number as the seed for the 
-    // next iteration.
-
-
+// getKey: perform computation on current key to generate next pseudorandom key
+// input: current key
+// returns: new current key
 int8_t getKey(int8_t currentKey){
+    // square current key and divide it by two then subtract 5 to get the new key
     int8_t newKey = (currentKey*currentKey)/2;
     return (newKey - 5);
 }
 
-// This function runs a bash command to retrieve the creation date of the file specified in the input, 
+// getSeed: runs a bash command to retrieve the creation date of the file specified in the input, 
 // temporarily writes the second of the creation time to a file and saves the contents of this file into 
 // the C variable number which is the seed of the encrpytion key and is returned by this function
+// input: fileName of binary file to encrypt or decrypt
+// returns: seed integer
 int getSeed(char* fileName){
 
     //concatenate filename string with rest of command
@@ -229,21 +245,25 @@ int getSeed(char* fileName){
 
     // open seedTemp.txt and save value as integer
     FILE *in_file;
+
+    // create variable to store
     int number;
 
     in_file = fopen(tempFile, "r");
 
-    if (in_file == NULL)
-    {
+    // make sure file opened properly
+    if (in_file == NULL){
         printf("Can't open seed temp file for reading.\n");
         return -1;
     }
-    else
-    {
+
+    else{
+        // read in number from temp file as a line
         fscanf(in_file, "%d", &number);
         fclose(in_file);
     }
 
+    // delete temp file
     remove(tempFile);
 
     return number;
