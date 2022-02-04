@@ -19,6 +19,7 @@ int main(void){
 
     // message on start up
     printf("\n -- WELCOME TO LYNX ENCRYPTION -- \n\n");
+  
     printf("This application is MIT licensed. Author: Henry Becker. Date: Jan 2022\n\n");
 
     promptUser();

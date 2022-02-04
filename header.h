@@ -1,6 +1,7 @@
 #ifndef LYNX_H
 #define LYNX_H
-#include <stdio.h>
+
+#include <stdlib.h>
 
 void encrypt(char* txtFile);
 void decrypt(char* binFile);
