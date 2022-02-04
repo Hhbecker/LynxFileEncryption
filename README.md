@@ -4,7 +4,7 @@ A text file encryption application
 <img src="images/lynxMeganLorenz.jpg" width="600px" height="400px">
 Wild Canadian Lynx photographed by Megan Lorenz <br /><br />
 
-<br /><br />
+<br /><br/>
 
 
 # To Do
@@ -58,11 +58,11 @@ I think it is so cool that C has support for inline assembly. Because I have an 
             : "a" (currentChar), "b" (key) );
 ```
 
-`xorb` = opcode for xor on a single byte of data
-`%%bl` = source register is the lowest 8 bits of the general purpose EBX register 
-`%%al` = destination register (also a source register) is the lowest 8 bits of the general purpose EAX register
-`: "=a" (currentChar)` = save results of register a (low byte of EAX) into the currentChar variable
-`: "a" (currentChar), "b" (key) )` = save the value of `currentChar` into register a and the value of `key` into register b
+`xorb` = opcode for xor on a single byte of data <br />
+`%%bl` = source register is the lowest 8 bits of the general purpose EBX register <br /> 
+`%%al` = destination register (also a source register) is the lowest 8 bits of the general purpose EAX register <br />
+`: "=a" (currentChar)` = save results of register a (low byte of EAX) into the currentChar variable <br />
+`: "a" (currentChar), "b" (key) )` = save the value of `currentChar` into register a and the value of `key` into register b <br />
 
 I used the following resources when implementing this inline assembly:
 https://www.codeproject.com/Articles/15971/Using-Inline-Assembly-in-C-C
