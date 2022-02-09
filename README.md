@@ -95,7 +95,7 @@ is known as the middle-square method: take any number, square it, remove the mid
 ### Storage of characters vs encrypted binary
 In most x86_64 architectures (and on my machine) memory is byte addressable. The addressability is the size in bytes of the smallest unit of memory that has its own address. In other words a byte addressable machine has an address for each byte of data stored in memory. The character data type in C is 1 byte and therefore each char has its own address. I used the `uint8_t` data type which is also a fixed size of 1 byte to hold the encrypted binary version of the character.
 
-<img src="images/mem.jpeg">
+<img src="images/mem.png">
 
 
 ### Cryptanalysis
