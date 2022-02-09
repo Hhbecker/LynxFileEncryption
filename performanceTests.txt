@@ -11,18 +11,18 @@ ASM Test:
 
 200 Words
 
-rusage time = 124
-rdtsc time = 1343494
+Execution time (milliseconds) = 124  
+Processor cycles = 1343494
 
 1000 Words
 
-rusage time = 589
-rdtsc time = 3351542
+Execution time (milliseconds) = 589
+Processor cycles = 3351542
 
 5000 Words
 
-rusage time = 2410
-rdtsc time = 7720764
+Execution time (milliseconds) = 2410
+Processor cycles = 7720764
 
 //////////////////////////////
 
@@ -30,17 +30,17 @@ C Test:
 
 200 Words
 
-rusage time = 123
-rdtsc time = 1267690
+Execution time (milliseconds) = 123
+Processor cycles = 1267690
 
 1000 Words
 
-rusage time = 591
-rdtsc time = 3083578
+Execution time (milliseconds) = 591
+Processor cycles = 3083578
 
 5000 Words
 
-rusage time = 2743
-rdtsc time = 8542728
+Execution time (milliseconds) = 2743
+Processor cycles = 8542728
 
 

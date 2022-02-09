@@ -51,14 +51,15 @@ void encrypt(char* txtFile){
     }
 
     // create variable to hold current character from the text file 
-    char currentChar; 
+    int getcInt;
+    unsigned char currentChar; 
 
     // get number generator seed which is the creation time of the binary file held by the OS
     int key = (int8_t) getSeed(binFile);
 
     // the seed is currently supposed to be the seconds of the hours:minutes:seconds of the creation time
     // if the seconds is not between 0-60 something went wrong
-    if(key < 0 || key > 60){
+    if(key < 0 || key > 63){
         printf("Seed retrieval error\n");
         fclose(fp);
         fclose(fpBin);
@@ -70,16 +71,18 @@ void encrypt(char* txtFile){
     // iterate through each char in the text file
     while(1){
         // set currentChar var to the next char in the input buffer using fgetc()
-        currentChar = fgetc(fp); 
+        getcInt = fgetc(fp); 
         // if the current char equals -1 (the end of file ) break loop
-        if(currentChar == EOF){
+        if(getcInt == EOF){
             break;
         }
         else {
-
+            // prevent negative values from creating premature EOF 
+            if(getcInt < 0){
+                getcInt = 63;
+            }
             // perform calculation to produce pseudorandom key 
             key = getKey(key);
-    
 
             // XOR the key with the current char
             //currentChar = key ^ currentChar; // (non assembly implementation)
@@ -165,10 +168,10 @@ void decrypt(char* binFile){
     }
 
     // set initial key to seed
-    int8_t key = (int8_t) getSeed(binFile);
+    uint8_t key = (uint8_t) getSeed(binFile);
 
     // if key is not within 0-60 seconds something went wrong
-    if(key < 0 || key > 60){
+    if(key < 0 || key > 63){
         printf("Seed retrieval error\n");
         fclose(fp);
         fclose(fpBin);
@@ -221,10 +224,13 @@ void decrypt(char* binFile){
 // getKey: perform computation on current key to generate next pseudorandom key
 // input: current key
 // returns: new current key
-int8_t getKey(int8_t currentKey){
+uint8_t getKey(uint8_t currentKey){
     // square current key and divide it by two then subtract 5 to get the new key
-    int8_t newKey = (currentKey*currentKey)/2;
-    return (newKey - 5);
+    uint8_t newKey = (currentKey*5)+17;
+    // logical shift right by 1 place to prevent a 1 from ever being in the most significant bit
+    newKey = newKey & 127;
+   // printf("key is %d\n", (int) newKey);
+    return (newKey);
 }
 
 // getSeed: runs a bash command to retrieve the creation date of the file specified in the input, 
@@ -270,7 +276,6 @@ int getSeed(char* fileName){
 
     // delete temp file
     remove(tempFile);
-
-    return number;
+    return number+2;
 }
 
