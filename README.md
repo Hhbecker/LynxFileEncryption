@@ -3,7 +3,6 @@ A text file encryption application
 
 <img src="images/lynxMeganLorenz.jpg" width="900px" height="600px">
 Wild Canadian Lynx photographed by Megan Lorenz <br /><br />
-
 <br />
 The Lynx file encryption system digitizes the One Time Pad encryption technqiue to efficiently and reliably encrypt sensitive text data. I created this application while learning about different encryption strategies, their strengths, and their weaknesses. I got curious about encryption after realizing I didn't know how the icloud keychain stored my passwords and other sensitive information. This project is really just a proof of concept and a learning exercise. I did not spend too long on any one feature so there are several weaknesses which I'll discuss later. I've included my design plans, an explanation of my impelmentation, example input/output, and notes on what I learned during the process. I've also included a secret lynx encrypted message in the `secretMessage.lynx` file...
 
@@ -94,7 +93,7 @@ Most x86_64 architectures have byte addressable memory. A byte addressable machi
 Given that there are 127 ascii encoded characters for the cipherer to use, a message of length n has 127^n possibilities (message space is 127^n). If the keys were randomly generated there would be an equal probability that the ciphertext could be any one of those 127^n possibilities. Therefore, if an attacker is given the ciphertext, the best the attacker can do is guess any of the 26^10 possible keys and messages. The OTP method is perfectly secret because the message space is not narrowed down at all if the ciphertext is revealed. In practicality, the security of the one time pad is entirely due to the randomness of the keys. The creation of large quantities of random keys and their safe distribution are the most difficult conditions that must be met to ensure the security of the OTP method. 
 
 
-### Highlights for me
+### Highlights
 1. Using inline assembly for the first time.
 2. Learning more about the system command, sed, grep, and regex in order to get the file creation timestamp from the OS. 
 3. Learning more about infosec, encryption, pseudorandom number generation, and the points of failure in different encryption strategies.
