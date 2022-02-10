@@ -227,6 +227,7 @@ Please enter e to encrypt, d to decrypt, or x to exit:
 User: d
 
 Please specify the filepath and document name:
+
 User: testFiles/200wordTest.lynx
 
 
