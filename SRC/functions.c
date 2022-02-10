@@ -52,7 +52,7 @@ void encrypt(char* txtFile){
 
     // create variable to hold current character from the text file 
     int getcInt;
-    unsigned char currentChar; 
+    char currentChar; 
 
     // get number generator seed which is the creation time of the binary file held by the OS
     int key = (int8_t) getSeed(binFile);
@@ -78,11 +78,14 @@ void encrypt(char* txtFile){
         }
         else {
             // prevent negative values from creating premature EOF 
-            if(getcInt < 0){
-                getcInt = 63;
+            if(getcInt > 127){
+                getcInt = 34;
             }
             // perform calculation to produce pseudorandom key 
             key = getKey(key);
+
+            // cast int read from file to a char
+            currentChar = (char) getcInt;
 
             // XOR the key with the current char
             //currentChar = key ^ currentChar; // (non assembly implementation)
@@ -229,7 +232,7 @@ uint8_t getKey(uint8_t currentKey){
     uint8_t newKey = (currentKey*5)+17;
     // logical shift right by 1 place to prevent a 1 from ever being in the most significant bit
     newKey = newKey & 127;
-   // printf("key is %d\n", (int) newKey);
+    //printf("Key is %d\n", (int) newKey);
     return (newKey);
 }
 
@@ -276,6 +279,7 @@ int getSeed(char* fileName){
 
     // delete temp file
     remove(tempFile);
-    return number+2;
+    //printf("Seed is: %d", number);
+    return number;
 }
 

@@ -1,3 +1,4 @@
+200 Word Test:
 The story of Icarus: Ancient Greek mythology, 
 Master craftsmen Daedalus helped create the Minotaur which greatly angered 
 the king of Crete, the king forced Daedalus to build an inescapable labyrinth 
@@ -14,3 +15,4 @@ Icarus began to climb higher and higher, he was overwhelmed with the ecstasy of
 flight, he was overcome with the feeling of divine power, he felt like a god, 
 he flew higher and higher, Daedalus was powerless to stop him, soon the sun 
 melted the wax of Icarus' wings and he plummeted to his death. 
+

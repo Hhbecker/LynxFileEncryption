@@ -1,18 +1,10 @@
 # LynxFileEncryption
 A text file encryption application 
 
-<img src="images/lynxMeganLorenz.jpg" width="600px" height="400px">
+<img src="images/lynxMeganLorenz.jpg" width="900px" height="600px">
 Wild Canadian Lynx photographed by Megan Lorenz <br /><br />
 
 <br /><br/>
-
-
-# To Do
-* encrypt and decrypt each test to make sure its working at all sizes
-* make a typescript of the output of a shorter quote (and include it in the test file)
-* make a secret message binary file in test files
-* center lynx photo and caption
-
 
 The Lynx file encryption system dgitizes the One Time Pad encryption technqiue to efficiently and reliably encrypt sensitive text data. I created this application while learning about different encryption strategies, their strengths, and their weaknesses. I got curious about encryption after realizing I didn't know how the icloud keychain stored my passwords and other sensitive information. This project is really just a proof of concept and a learning exercise. I did not spend too long on any one feature so there are several weaknesses which I'll discuss later. I've included my design plans, an explanation of my impelmentation, example input/output, and notes on what I learned during the process. I've also included a secret lynx encrypted message in the `secretMessage.lynx` file...
 
