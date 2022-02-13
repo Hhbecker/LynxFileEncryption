@@ -4,16 +4,16 @@ A text file encryption application
 <img src="images/lynxMeganLorenz.jpg" width="900px" height="600px">
 Wild Canadian Lynx photographed by Megan Lorenz <br /><br />
 <br />
-The Lynx file encryption system digitizes the One Time Pad encryption technqiue to efficiently and reliably encrypt sensitive text data. I created this application while learning about different encryption strategies, their strengths, and their weaknesses. I got curious about encryption after realizing I didn't know how the icloud keychain stored my passwords and other sensitive information. This project is really just a proof of concept and a learning exercise. I did not spend too long on any one feature so there are several weaknesses which I'll discuss later. I've included my design plans, an explanation of my impelmentation, example input/output, and notes on what I learned during the process. I've also included a secret lynx encrypted message in the `secretMessage.lynx` file...
+The Lynx file encryption system digitizes the One Time Pad (OTP) encryption technqiue to efficiently and reliably encrypt sensitive text data. I created this application while learning about different encryption strategies, their strengths, and their weaknesses. I got curious about encryption after realizing I didn't know how the icloud keychain stored my passwords and other sensitive information. This project is really just a proof of concept and a learning exercise. I did not spend too long on any one feature so there are several weaknesses which I'll discuss later. I've included my design plans, an explanation of my impelmentation, example input/output, and notes on what I learned during the process. I've also included a secret lynx encrypted message in the `secretMessage.lynx` file...
 
 ## System Overview
-The Lynx file encryption system digitizes the OTP (one time pad) encryption technique. In this stream cipher technique, new pseudorandomly generated 8 bit keys are XOR'd with each 8 bit character of the plaintext. I implemented the driver and function bodies in C but used inline assembly to perform the XOR operation on both encryption and decrpytion (see section on assembly below).  
+The Lynx file encryption implements the OTP encryption technique as a stream cipher. New pseudorandomly generated 8 bit keys are XOR'd with each 8 bit character of the plaintext. I implemented the driver and function bodies in C but used inline assembly to perform the XOR operation on both encryption and decrpytion (see section on assembly below).  
 
 #### The Encryption Process
 1. Read in filename of text file to be encrypted.
 2. Create binary file with the same name as the plaintext file (with .lynx extension).
 3. Retrieve the creation time (seconds term) of the binary file from the OS and use this as the seed for the pseudorandom key generator.
-4. XOR each character in the plaintext, with a new key and save this result to the binary file.
+4. XOR each character in the plaintext with a new key and save this result to the binary file.
 5. Close both files.
 
 #### The Decryption Process
@@ -86,7 +86,7 @@ is known as the middle-square method: take any number, square it, remove the mid
 ### Storage of plaintext characters vs encrypted binary
 Most x86_64 architectures have byte addressable memory. A byte addressable machine has an address for each byte of storage space. The `char` data type in C is 1 byte and therefore each `char` has its own address. I used the `uint8_t` data type which is also a fixed size of 1 byte to hold the encrypted binary version of a plaintext character.
 
-<img src="images/mem.png">
+<img src="images/mem.png" width="500px" height="670px">
 
 
 ### Cryptanalysis
